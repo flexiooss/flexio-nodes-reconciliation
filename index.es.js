@@ -2,10 +2,7 @@ export {
   reconcile
 }
   from './src/Reconciliation'
-export {
-  constantes
-}
-  from './src/constantes'
+export * from './src/constantes'
 export {
   handleAttribute
 }

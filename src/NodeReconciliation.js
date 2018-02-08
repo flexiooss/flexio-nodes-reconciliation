@@ -1,6 +1,5 @@
 'use strict'
 import {
-  hasParentPrototypeName,
   isNode,
   should,
   isNodeText
@@ -9,26 +8,19 @@ import {
 const EXCLUDES_ATTRIBUTES = ['class', 'id']
 
 class NodeReconciliation {
-  constructor(current, candidate, scope) {
+  constructor(current, candidate) {
     should(isNode(current) && isNode(candidate),
       'Reconciliation: `current` and  `candidate` arguments should be Node')
-    should(hasParentPrototypeName(scope, 'View'),
-      'Reconciliation: `scope` and  `candidate` argument should be an instance of hotballoon/View')
 
     this.current = current
     this.candidate = candidate
-    this.scope = scope
-
-    // console.log(this.candidate)
-    // debugger
   }
 
-  static nodeReconciliation(current, candidate, scope) {
-    new NodeReconciliation(current, candidate, scope).reconcile()
+  static nodeReconciliation(current, candidate) {
+    new NodeReconciliation(current, candidate).reconcile()
   }
 
   reconcile() {
-    console.log('NodeReconciliation:reconcile')
     if (isNodeText(this.candidate)) {
       this._updateText()
     } else if (this.candidate.nodeType === this.current.nodeType) {
@@ -40,17 +32,13 @@ class NodeReconciliation {
   }
 
   _updateText() {
-    // console.log('_updateTextContent')
-    // console.dir(this.candidate.nodeValue)
-    // console.dir(this.current)
-    // debugger
-
     if (isNodeText(this.current) && (this.candidate.nodeValue !== this.current.nodeValue)) {
       this.current.nodeValue = this.candidate.nodeValue
     } else {
       this.current.replaceWith(this.candidate)
     }
   }
+
   _updateClassList() {
     const candidateClassList = this.candidate.classList
     const currentClassList = this.current.classList
@@ -69,13 +57,12 @@ class NodeReconciliation {
       })
     }
   }
+
   _updateAttr() {
     const candidateAttrs = this.candidate.attributes
     if (candidateAttrs) {
       for (let i = candidateAttrs.length - 1; i >= 0; i--) {
         if (EXCLUDES_ATTRIBUTES.indexOf(candidateAttrs[i].name) === -1) {
-          console.log(candidateAttrs[i].name + '->' + candidateAttrs[i].value)
-
           if (this.current.getAttribute(candidateAttrs[i].name) !== candidateAttrs[i].value) {
             this.current.setAttribute(candidateAttrs[i].name, candidateAttrs[i].value)
           }

@@ -1,8 +1,8 @@
 'use strict'
 import {
-  hasParentPrototypeName,
   isNode,
-  should
+  should,
+  removeChildren
 } from 'flexio-jshelpers'
 import {
   handleAttribute as ha
@@ -34,25 +34,18 @@ const compareMapOrSet = (a, b) => {
  *
  * @param {NodeElement} current
  * @param {NodeElement} candidate
- * @param {View} scope
  * @param {NodeElement} parentCurrent parent of current element
 
  */
 
 class Reconciliation {
-  constructor(current, candidate, scope, parentCurrent) {
-    // console.log('Reconciliation')
-    // console.log(current)
-    // console.log(candidate)
-    // debugger
+  constructor(current, candidate, parentCurrent) {
     should(isNode(current) && isNode(candidate),
       'Reconciliation: `current` and  `candidate` arguments should be Node')
-    should(hasParentPrototypeName(scope, 'View'),
-      'Reconciliation: `scope` and  `candidate` argument should be an instance of hotballoon/View')
+
     this.current = current
     this.parentCurrent = parentCurrent || null
     this.candidate = candidate
-    this.scope = scope
     this.haCurrent = ha(current)
     this.haCandidate = ha(candidate)
     this._equalNode = null
@@ -60,14 +53,12 @@ class Reconciliation {
     this._equalWithoutChildren = null
   }
 
-  static reconciliation(current, candidate, scope, parentCurrent) {
-    new Reconciliation(current, candidate, scope, parentCurrent).reconcile()
+  static reconciliation(current, candidate, parentCurrent) {
+    new Reconciliation(current, candidate, parentCurrent).reconcile()
   }
 
   reconcile() {
     if (this._hasByPathRule() || (this._isEqualNode() && this._isEqualListeners())) {
-      // console.log('this._hasByPathRule() || (this._isEqualNode() && this._isEqualListeners())')
-
       return this._abort()
     }
 
@@ -80,13 +71,10 @@ class Reconciliation {
       }
 
       if (this._hasExcludeChildrenRule() && this._isEqualWithoutChildren()) {
-        // console.log('this._hasExcludeChildrenRule() && this._isEqualWithoutChildren()')
-
         return this._abort()
       }
 
       if (!this._isEqualWithoutChildren()) {
-        // console.log(' if (this._isEqualWithoutChildren())')
         this._updateCurrent()
       }
       this._reconcileChildNodes()
@@ -105,77 +93,50 @@ class Reconciliation {
      */
 
   _compareNodeType() {
-    console.log('_compareNodeType')
-
     if (this.current.nodeType !== this.candidate.nodeType) {
-      // this.current.replaceWith(this.candidate)
       this.parentCurrent.replaceChild(this.candidate, this.current)
       return false
     }
   }
   _compareTagName() {
-    console.log('_compareTagName')
-    console.log(this.current.tagName)
-    console.log(this.candidate.tagName)
-
     if (this.current.tagName !== this.candidate.tagName) {
       this.parentCurrent.replaceChild(this.candidate, this.current)
       // this.current.replaceWith(this.candidate)
       return false
     }
   }
-  _removeChildren(node) {
-    while (node.firstChild) {
-      node.removeChild(node.firstChild)
-    }
-  }
-  _removeChildrenPart(node, start, end) {
-    start = start || null
-    end = end || node.childNodes.length
-    end++
 
-    while (node.childNodes[start] < end) {
-      node.removeChild(node[start])
-      start++
-    }
-  }
   _updateCurrent() {
-    console.log('_updateCurrent')
-
-    // console.log(this.candidate)
-
-    nodeReconcile(this.current, this.candidate, this.scope)
+    nodeReconcile(this.current, this.candidate)
   }
 
+  /**
+     * @private
+     * @method
+     * @description
+     */
   _reconcileChildNodes() {
-    console.log('_reconcileChildNodes')
-
     if (this.candidate.hasChildNodes()) {
-      this._traverse()
+      this._traverseChildNodes()
     } else if (this.current.hasChildNodes()) {
-      console.log('_removeChildren')
-
-      this._removeChildren(this.current)
+      this.removeChildren(this.current)
     }
   }
+
   /**
      * @private
      * @method
      * @description traverse and reconcile slibing's nodes
      *
      */
-  _traverse() {
-    console.log('_traverse')
-
-    // console.log(this.current.childNodes.length)
-    // console.log(this.candidate.childNodes.length)
+  _traverseChildNodes() {
     let candidate = this.candidate.firstChild
     let i = 0
     do {
       let nextCandidate = candidate.nextSibling
       let current = this._currentById(i, candidate)
       if (current) {
-        Reconciliation.reconciliation(current, candidate, this.scope, this.current)
+        Reconciliation.reconciliation(current, candidate, this.current)
       } else {
         this.current.appendChild(candidate)
       }
@@ -184,11 +145,7 @@ class Reconciliation {
     } while (candidate)
 
     if (this.current.childNodes.length > this.candidate.childNodes.length) {
-      console.log('_removeChildrenPart')
-      // console.log(this.current.childNodes.length)
-      // console.log(this.candidate.childNodes.length)
-
-      this._removeChildrenPart(this.current, i)
+      removeChildren(this.current, i)
     }
   }
 
@@ -273,7 +230,6 @@ class Reconciliation {
      * --------------------------------------------------------------
      */
   _abort() {
-    console.log('_abort')
     return false
   }
 }

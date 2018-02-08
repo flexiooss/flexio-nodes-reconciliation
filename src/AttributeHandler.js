@@ -3,12 +3,10 @@ import {
   should
 } from 'flexio-jshelpers'
 import {
-  KEY
+  KEY_ROOT,
+  KEY_EVENT_WRAPPER,
+  KEY_RECONCILIATE_RULES
 } from './constantes'
-
-const KEY_ROOT = '__FNR__'
-const EVENT_WRAPPER = 'events'
-const RECONCILIATE_RULES = 'reconciliateRules'
 
 class AttributeHandler {
   constructor(element) {
@@ -46,15 +44,15 @@ class AttributeHandler {
      * --------------------------------------------------------------
      */
   hasReconciliationRules() {
-    return KEY.RECONCILIATE_RULES in this.privateAttribute
+    return KEY_RECONCILIATE_RULES in this.privateAttribute
   }
 
   hasReconciliationRule(rule) {
-    return (KEY.RECONCILIATE_RULES in this.privateAttribute) && (this.privateAttribute[KEY.RECONCILIATE_RULES].indexOf(rule) !== -1)
+    return (KEY_RECONCILIATE_RULES in this.privateAttribute) && (this.privateAttribute[KEY_RECONCILIATE_RULES].indexOf(rule) !== -1)
   }
 
   reconciliateRules() {
-    return (KEY.RECONCILIATE_RULES in this.privateAttribute) ? this.privateAttribute[KEY.RECONCILIATE_RULES] : this._initReconciliateRule()
+    return (KEY_RECONCILIATE_RULES in this.privateAttribute) ? this.privateAttribute[KEY_RECONCILIATE_RULES] : this._initReconciliateRule()
   }
 
   _initReconciliateRule() {
@@ -68,7 +66,7 @@ class AttributeHandler {
      */
 
   eventListeners() {
-    return (KEY.EVENT_WRAPPER in this.privateAttribute) ? this.privateAttribute[KEY.EVENT_WRAPPER] : this._initEventListener()
+    return (KEY_EVENT_WRAPPER in this.privateAttribute) ? this.privateAttribute[KEY_EVENT_WRAPPER] : this._initEventListener()
   }
   _initEventListener() {
     return new Map()
@@ -91,14 +89,14 @@ class AttributeHandler {
     this._addEventListener(type, listener, useCapture)
   }
   _addEventListener(type, listener, useCapture) {
-    if (!(KEY.EVENT_WRAPPER in this.privateAttribute)) {
-      this.privateAttribute[KEY.EVENT_WRAPPER] = this._initEventListener()
+    if (!(KEY_EVENT_WRAPPER in this.privateAttribute)) {
+      this.privateAttribute[KEY_EVENT_WRAPPER] = this._initEventListener()
     }
-    if (!(this.privateAttribute[KEY.EVENT_WRAPPER].has(type))) {
-      this.privateAttribute[KEY.EVENT_WRAPPER].set(type, this._initEventListenerType())
+    if (!(this.privateAttribute[KEY_EVENT_WRAPPER].has(type))) {
+      this.privateAttribute[KEY_EVENT_WRAPPER].set(type, this._initEventListenerType())
     }
 
-    this.privateAttribute[KEY.EVENT_WRAPPER].get(type).add({
+    this.privateAttribute[KEY_EVENT_WRAPPER].get(type).add({
       type: type,
       listener: listener,
       useCapture: useCapture
@@ -119,8 +117,8 @@ class AttributeHandler {
     this._removeEventListener(type, listener, useCapture)
   }
   _removeEventListener(type, listener, useCapture) {
-    if (this.privateAttribute[KEY.EVENT_WRAPPER].has(type)) {
-      this.privateAttribute[KEY.EVENT_WRAPPER].get(type).delete({
+    if (this.privateAttribute[KEY_EVENT_WRAPPER].has(type)) {
+      this.privateAttribute[KEY_EVENT_WRAPPER].get(type).delete({
         type: type,
         listener: listener,
         useCapture: useCapture

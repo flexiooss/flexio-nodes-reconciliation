@@ -5,11 +5,14 @@ import {
   removeChildren
 } from 'flexio-jshelpers'
 import {
-  handleAttribute as ha
+  handleAttribute as har
 } from './AttributeHandler'
 import {
   nodeReconcile
 } from './NodeReconciliation'
+import {
+  eventReconcile
+} from './EventReconciliation'
 
 import {
   RECONCILIATION_RULES as R
@@ -35,7 +38,6 @@ const compareMapOrSet = (a, b) => {
  * @param {NodeElement} current
  * @param {NodeElement} candidate
  * @param {NodeElement} parentCurrent parent of current element
-
  */
 
 class Reconciliation {
@@ -46,13 +48,19 @@ class Reconciliation {
     this.current = current
     this.parentCurrent = parentCurrent || null
     this.candidate = candidate
-    this.haCurrent = ha(current)
-    this.haCandidate = ha(candidate)
+    this.harCurrent = har(current)
+    this.harCandidate = har(candidate)
     this._equalNode = null
     this._equalListeners = null
     this._equalWithoutChildren = null
   }
 
+  /**
+     * @static
+     * @param {NodeElement} current
+     * @param {NodeElement} candidate
+     * @param {NodeElement} parentCurrent parent of current element
+     */
   static reconciliation(current, candidate, parentCurrent) {
     new Reconciliation(current, candidate, parentCurrent).reconcile()
   }
@@ -63,25 +71,16 @@ class Reconciliation {
     }
 
     if (!this._isEqualNode()) {
-      if (this._compareNodeType() === false) {
-        return this._abort()
-      }
-      if (this._compareTagName() === false) {
-        return this._abort()
-      }
-
-      if (this._hasExcludeChildrenRule() && this._isEqualWithoutChildren()) {
-        return this._abort()
-      }
-
       if (!this._isEqualWithoutChildren()) {
         this._updateCurrent()
       }
-      this._reconcileChildNodes()
+      if (!this._hasExcludeChildrenRule()) {
+        this._reconcileChildNodes()
+      }
     }
 
     if (!this._isEqualListeners()) {
-
+      eventReconcile(this.current, this.candidate)
     }
   }
 
@@ -91,20 +90,6 @@ class Reconciliation {
      * Actions
      * --------------------------------------------------------------
      */
-
-  _compareNodeType() {
-    if (this.current.nodeType !== this.candidate.nodeType) {
-      this.parentCurrent.replaceChild(this.candidate, this.current)
-      return false
-    }
-  }
-  _compareTagName() {
-    if (this.current.tagName !== this.candidate.tagName) {
-      this.parentCurrent.replaceChild(this.candidate, this.current)
-      // this.current.replaceWith(this.candidate)
-      return false
-    }
-  }
 
   _updateCurrent() {
     nodeReconcile(this.current, this.candidate)
@@ -200,7 +185,7 @@ class Reconciliation {
   }
   _isEqualListeners() {
     if (this._equalListeners === null) {
-      this._equalListeners = compareMapOrSet(this.haCurrent.eventListeners(), this.haCandidate.eventListeners())
+      this._equalListeners = compareMapOrSet(this.harCurrent.eventListeners(), this.harCandidate.eventListeners())
     }
     return this._equalListeners
   }
@@ -218,10 +203,10 @@ class Reconciliation {
      * --------------------------------------------------------------
      */
   _hasByPathRule() {
-    return this.haCurrent.hasReconciliationRule(R.BYPATH)
+    return this.harCurrent.hasReconciliationRule(R.BYPATH)
   }
   _hasExcludeChildrenRule() {
-    return this.haCurrent.hasReconciliationRule(R.EXCLUDE_CHILDS)
+    return this.harCurrent.hasReconciliationRule(R.BYPATH_CHILDREN)
   }
   /**
      *

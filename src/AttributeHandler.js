@@ -89,14 +89,11 @@ class AttributeHandler {
     this._addEventListener(type, listener, useCapture)
   }
   _addEventListener(type, listener, useCapture) {
-    if (!(KEY_EVENT_WRAPPER in this.privateAttribute)) {
-      this.privateAttribute[KEY_EVENT_WRAPPER] = this._initEventListener()
-    }
-    if (!(this.privateAttribute[KEY_EVENT_WRAPPER].has(type))) {
-      this.privateAttribute[KEY_EVENT_WRAPPER].set(type, this._initEventListenerType())
+    if (!(this.eventListeners().has(type))) {
+      this.eventListeners().set(type, this._initEventListenerType())
     }
 
-    this.privateAttribute[KEY_EVENT_WRAPPER].get(type).add({
+    this.eventListeners().get(type).add({
       type: type,
       listener: listener,
       useCapture: useCapture
@@ -117,8 +114,8 @@ class AttributeHandler {
     this._removeEventListener(type, listener, useCapture)
   }
   _removeEventListener(type, listener, useCapture) {
-    if (this.privateAttribute[KEY_EVENT_WRAPPER].has(type)) {
-      this.privateAttribute[KEY_EVENT_WRAPPER].get(type).delete({
+    if (this.eventListeners().has(type)) {
+      this.eventListeners().get(type).delete({
         type: type,
         listener: listener,
         useCapture: useCapture

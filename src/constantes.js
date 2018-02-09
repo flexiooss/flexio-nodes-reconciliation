@@ -4,5 +4,5 @@ export const KEY_RECONCILIATE_RULES = 'reconciliateRules'
 
 export const RECONCILIATION_RULES = Object.freeze(Object.seal({
   BYPATH: 'bypath',
-  EXCLUDE_CHILDS: 'excludeChildren'
+  BYPATH_CHILDREN: 'bypathChildren'
 }))

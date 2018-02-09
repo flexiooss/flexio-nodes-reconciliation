@@ -10,7 +10,7 @@ const EXCLUDES_ATTRIBUTES = ['class', 'id']
 class NodeReconciliation {
   constructor(current, candidate) {
     should(isNode(current) && isNode(candidate),
-      'Reconciliation: `current` and  `candidate` arguments should be Node')
+      'NodeReconciliation: `current` and  `candidate` arguments should be Node')
 
     this.current = current
     this.candidate = candidate
@@ -23,7 +23,7 @@ class NodeReconciliation {
   reconcile() {
     if (isNodeText(this.candidate)) {
       this._updateText()
-    } else if (this.candidate.nodeType === this.current.nodeType) {
+    } else if (this.current.tagName === this.candidate.tagName) {
       this._updateClassList()
       this._updateAttr()
     } else {

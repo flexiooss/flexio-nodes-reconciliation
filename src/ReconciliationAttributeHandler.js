@@ -1,6 +1,6 @@
 import {
   AttributeHandler,
-  should
+  assert
 } from 'flexio-jshelpers'
 import {
   KEY_RECONCILIATE_RULES
@@ -41,8 +41,8 @@ class ReconciliationAttributeHandler extends AttributeHandler {
      * @param {Array} rules
      */
   addReconcileRules(rules) {
-    should(Array.isArray(rules),
-      'flexio-nodes-reconciliation:ReconciliationAttributeHandler:addReconcileRules: `rules` argument should be an Array `%s` given',
+    assert(Array.isArray(rules),
+      'flexio-nodes-reconciliation:ReconciliationAttributeHandler:addReconcileRules: `rules` argument assert be an Array `%s` given',
       typeof element
     )
 

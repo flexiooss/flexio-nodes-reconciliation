@@ -1,7 +1,7 @@
 'use strict'
 import {
   isNode,
-  should,
+  assert,
   removeChildren
 } from 'flexio-jshelpers'
 import {
@@ -11,7 +11,7 @@ import {
   nodeReconcile
 } from './NodeReconciliation'
 import {
-  shouldUpdateCurrent,
+  assertUpdateCurrent,
   listenerReconcile
 } from './ListenerReconciliation'
 
@@ -30,8 +30,8 @@ const MAX_SLIBINGS_NODES_UPDATE_BY_ID = 50
 
 class Reconciliation {
   constructor(current, candidate, parentCurrent) {
-    should(isNode(current) && isNode(candidate),
-      'Reconciliation: `current` and  `candidate` arguments should be Node')
+    assert(isNode(current) && isNode(candidate),
+      'Reconciliation: `current` and  `candidate` arguments assert be Node')
 
     this.current = current
     this.parentCurrent = parentCurrent || null
@@ -177,7 +177,7 @@ class Reconciliation {
   }
   _isEqualListeners() {
     if (this._equalListeners === null) {
-      this._equalListeners = shouldUpdateCurrent(this.harCurrent.eventListeners(), this.harCandidate.eventListeners())
+      this._equalListeners = assertUpdateCurrent(this.harCurrent.eventListeners(), this.harCandidate.eventListeners())
     }
     return this._equalListeners
   }

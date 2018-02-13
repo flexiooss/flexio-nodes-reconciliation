@@ -1,7 +1,7 @@
 'use strict'
 import {
   isNode,
-  should,
+  assert,
   isNodeText
 } from 'flexio-jshelpers'
 
@@ -13,8 +13,8 @@ const EXCLUDES_ATTRIBUTES = ['class', 'id']
 
 class NodeReconciliation {
   constructor(current, candidate) {
-    should(isNode(current) && isNode(candidate),
-      'NodeReconciliation: `current` and  `candidate` arguments should be Node')
+    assert(isNode(current) && isNode(candidate),
+      'NodeReconciliation: `current` and  `candidate` arguments assert be Node')
 
     this.current = current
     this.candidate = candidate

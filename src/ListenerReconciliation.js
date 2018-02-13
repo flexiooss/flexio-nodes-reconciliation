@@ -1,7 +1,7 @@
 'use strict'
 import {
   isNode,
-  should
+  assert
 } from 'flexio-jshelpers'
 import {
   select
@@ -13,8 +13,8 @@ import {
  */
 class ListenerReconciliation {
   constructor(current, candidate) {
-    should(isNode(current) && isNode(candidate),
-      'EventReconciliation: `current` and  `candidate` arguments should be Node')
+    assert(isNode(current) && isNode(candidate),
+      'EventReconciliation: `current` and  `candidate` arguments assert be Node')
 
     this.current = current
     this.candidate = candidate
@@ -36,7 +36,7 @@ class ListenerReconciliation {
      * @param {ListenerAttributeHandler} current
      * @param {ListenerAttributeHandler} candidate
      */
-  static shouldUpdateCurrent(current, candidate) {
+  static assertUpdateCurrent(current, candidate) {
     var ret = true
 
     const test = (a, b) => {
@@ -151,4 +151,4 @@ class ListenerReconciliation {
 }
 
 export const listenerReconcile = ListenerReconciliation.listenerReconciliation
-export const shouldUpdateCurrent = ListenerReconciliation.shouldUpdateCurrent
+export const assertUpdateCurrent = ListenerReconciliation.assertUpdateCurrent

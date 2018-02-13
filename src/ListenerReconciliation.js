@@ -4,22 +4,22 @@ import {
   should
 } from 'flexio-jshelpers'
 import {
-  handleAttribute as har
-} from './AttributeHandler'
+  select
+} from './ListenerAttributeHandler'
 
 /**
  * @param {NodeElement} current
  * @param {NodeElement} candidate
  */
-class EventReconciliation {
+class ListenerReconciliation {
   constructor(current, candidate) {
     should(isNode(current) && isNode(candidate),
       'EventReconciliation: `current` and  `candidate` arguments should be Node')
 
     this.current = current
     this.candidate = candidate
-    this.harCurrent = har(current)
-    this.harCandidate = har(candidate)
+    this.harCurrent = select(current)
+    this.harCandidate = select(candidate)
   }
 
   /**
@@ -27,8 +27,42 @@ class EventReconciliation {
      * @param {NodeElement} current
      * @param {NodeElement} candidate
      */
-  static eventReconciliation(current, candidate) {
-    new EventReconciliation(current, candidate).reconcile()
+  static listenerReconciliation(current, candidate) {
+    new ListenerReconciliation(current, candidate).reconcile()
+  }
+
+  /**
+     * @static
+     * @param {ListenerAttributeHandler} current
+     * @param {ListenerAttributeHandler} candidate
+     */
+  static shouldUpdateCurrent(current, candidate) {
+    var ret = true
+
+    const test = (a, b) => {
+      a.forEach((value, key, map) => {
+        if (value.size && !b.has(key)) {
+          ret = false
+          return false
+        }
+        if (value instanceof Map) {
+          let bListeners = b.get(key)
+          value.forEach((value, key, map) => {
+            if (!bListeners.has(key)) {
+              ret = false
+              return false
+            }
+          })
+        }
+      })
+    }
+
+    test(candidate, current)
+
+    if (ret) {
+      test(current, candidate)
+    }
+    return ret
   }
 
   reconcile() {
@@ -61,14 +95,15 @@ class EventReconciliation {
   _updateCurrent(type) {
     let currentSet = this.harCurrent.eventListeners().get(type)
     let candidateSet = this.harCandidate.eventListeners().get(type)
-    candidateSet.forEach((value, key, set) => {
-      if (!currentSet.has(value)) {
-        this._addEventListener(value.type, value.listener, value.useCapture)
+
+    currentSet.forEach((value, key, set) => {
+      if (!candidateSet.has(key)) {
+        this._removeEventListener(value.type, key)
       }
     })
-    currentSet.forEach((value, key, set) => {
-      if (!candidateSet.has(value)) {
-        this._removeEventListener(value.type, value.listener, value.useCapture)
+    candidateSet.forEach((value, key, set) => {
+      if (!currentSet.has(key)) {
+        this._addEventListener(value.type, value.listener, value.useCapture)
       }
     })
   }
@@ -80,7 +115,7 @@ class EventReconciliation {
   _removeAllListeners(type) {
     this.harCurrent.eventListeners().get(type)
       .forEach((value, key, set) => {
-        this._removeEventListener(value.type, value.listener, value.useCapture)
+        this._removeEventListener(value.type, key)
       })
   }
 
@@ -98,11 +133,10 @@ class EventReconciliation {
   /**
      * @private
      * @param {String} type : type of event
-     * @param {Function} listener
-     * @param {Boolean} useCapture
+     * @param {String} key of Listener Map entry
      */
-  _removeEventListener(type, listener, useCapture) {
-    this.harCurrent.off(type, listener, useCapture)
+  _removeEventListener(type, key) {
+    this.harCurrent.off(type, key)
   }
 
   /**
@@ -116,4 +150,5 @@ class EventReconciliation {
   }
 }
 
-export const eventReconcile = EventReconciliation.eventReconciliation
+export const listenerReconcile = ListenerReconciliation.listenerReconciliation
+export const shouldUpdateCurrent = ListenerReconciliation.shouldUpdateCurrent

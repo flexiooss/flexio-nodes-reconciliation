@@ -5,33 +5,21 @@ import {
   removeChildren
 } from 'flexio-jshelpers'
 import {
-  handleAttribute as har
-} from './AttributeHandler'
+  select
+} from './ListenerAttributeHandler'
 import {
   nodeReconcile
 } from './NodeReconciliation'
 import {
-  eventReconcile
-} from './EventReconciliation'
+  shouldUpdateCurrent,
+  listenerReconcile
+} from './ListenerReconciliation'
 
 import {
   RECONCILIATION_RULES as R
-} from './constantes'
+} from './rules'
 
-const compareMapOrSet = (a, b) => {
-  if (a.size !== b.size) {
-    return false
-  }
-  let ret = a.forEach((value, key, map) => {
-    if (!b.has(key)) {
-      return false
-    }
-    if (!compareMapOrSet(b.get(key), value)) {
-      return false
-    }
-  })
-  return ret !== false
-}
+const MAX_SLIBINGS_NODES_UPDATE_BY_ID = 50
 
 /**
  *
@@ -48,11 +36,12 @@ class Reconciliation {
     this.current = current
     this.parentCurrent = parentCurrent || null
     this.candidate = candidate
-    this.harCurrent = har(current)
-    this.harCandidate = har(candidate)
+    this.harCurrent = select(current)
+    this.harCandidate = select(candidate)
     this._equalNode = null
     this._equalListeners = null
     this._equalWithoutChildren = null
+    this._isCurrentReplaced = false
   }
 
   /**
@@ -69,18 +58,17 @@ class Reconciliation {
     if (this._hasByPathRule() || (this._isEqualNode() && this._isEqualListeners())) {
       return this._abort()
     }
-
     if (!this._isEqualNode()) {
       if (!this._isEqualWithoutChildren()) {
         this._updateCurrent()
       }
-      if (!this._hasExcludeChildrenRule()) {
+      if (!this._isCurrentReplaced && !this._hasExcludeChildrenRule()) {
         this._reconcileChildNodes()
       }
     }
 
-    if (!this._isEqualListeners()) {
-      eventReconcile(this.current, this.candidate)
+    if (!this._hasExcludeListenersRule() && !this._isCurrentReplaced && !this._isEqualListeners()) {
+      listenerReconcile(this.current, this.candidate)
     }
   }
 
@@ -92,7 +80,7 @@ class Reconciliation {
      */
 
   _updateCurrent() {
-    nodeReconcile(this.current, this.candidate)
+    this._isCurrentReplaced = nodeReconcile(this.current, this.candidate)
   }
 
   /**
@@ -104,7 +92,7 @@ class Reconciliation {
     if (this.candidate.hasChildNodes()) {
       this._traverseChildNodes()
     } else if (this.current.hasChildNodes()) {
-      this.removeChildren(this.current)
+      removeChildren(this.current)
     }
   }
 
@@ -116,7 +104,7 @@ class Reconciliation {
      */
   _traverseChildNodes() {
     let candidate = this.candidate.firstChild
-    let i = 0
+    var i = 0
     do {
       let nextCandidate = candidate.nextSibling
       let current = this._currentById(i, candidate)
@@ -126,6 +114,7 @@ class Reconciliation {
         this.current.appendChild(candidate)
       }
       candidate = nextCandidate
+      nextCandidate = null
       i++
     } while (candidate)
 
@@ -148,7 +137,7 @@ class Reconciliation {
       if (this.current.childNodes[keyChildNode].id === candidate.id) {
         return this.current.childNodes[keyChildNode]
       } else {
-        let el = this._findNodeByIdInChildNodes(this.current, candidate.id)
+        let el = this._findNodeByIdInChildNodes(this.current, candidate.id, keyChildNode)
         if (isNode(el)) {
           this.current.insertBefore(el, this.current.childNodes[keyChildNode])
           return el
@@ -163,7 +152,10 @@ class Reconciliation {
      * @param {NodeElement} parentNode
      * @param {String} id
      */
-  _findNodeByIdInChildNodes(parentNode, id) {
+  _findNodeByIdInChildNodes(parentNode, id, start) {
+    if (parentNode.childNodes.length > MAX_SLIBINGS_NODES_UPDATE_BY_ID) {
+      return false
+    }
     for (let i = parentNode.childNodes.length - 1; i >= 0; i--) {
       if (parentNode.childNodes[i].id === id) {
         return parentNode.childNodes[i]
@@ -185,7 +177,7 @@ class Reconciliation {
   }
   _isEqualListeners() {
     if (this._equalListeners === null) {
-      this._equalListeners = compareMapOrSet(this.harCurrent.eventListeners(), this.harCandidate.eventListeners())
+      this._equalListeners = shouldUpdateCurrent(this.harCurrent.eventListeners(), this.harCandidate.eventListeners())
     }
     return this._equalListeners
   }
@@ -207,6 +199,9 @@ class Reconciliation {
   }
   _hasExcludeChildrenRule() {
     return this.harCurrent.hasReconciliationRule(R.BYPATH_CHILDREN)
+  }
+  _hasExcludeListenersRule() {
+    return this.harCurrent.hasReconciliationRule(R.BYPATH_LISTENERS)
   }
   /**
      *

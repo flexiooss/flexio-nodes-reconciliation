@@ -5,6 +5,10 @@ import {
   isNodeText
 } from 'flexio-jshelpers'
 
+import {
+  select as $
+} from './ListenerAttributeHandler'
+
 const EXCLUDES_ATTRIBUTES = ['class', 'id']
 
 class NodeReconciliation {
@@ -17,26 +21,33 @@ class NodeReconciliation {
   }
 
   static nodeReconciliation(current, candidate) {
-    new NodeReconciliation(current, candidate).reconcile()
+    return new NodeReconciliation(current, candidate).reconcile()
   }
 
   reconcile() {
     if (isNodeText(this.candidate)) {
-      this._updateText()
-    } else if (this.current.tagName === this.candidate.tagName) {
+      return this._updateText()
+    } else if (this.current.tagName && this.current.tagName === this.candidate.tagName) {
       this._updateClassList()
       this._updateAttr()
     } else {
-      this.current.replaceWith(this.candidate)
+      return this._replaceWith(this.current, this.candidate)
     }
+    return false
+  }
+  _replaceWith(current, candidate) {
+    $(current).cleanListeners()
+    current.replaceWith(candidate)
+    return true
   }
 
   _updateText() {
     if (isNodeText(this.current) && (this.candidate.nodeValue !== this.current.nodeValue)) {
       this.current.nodeValue = this.candidate.nodeValue
     } else {
-      this.current.replaceWith(this.candidate)
+      return this._replaceWith(this.current, this.candidate)
     }
+    return false
   }
 
   _updateClassList() {

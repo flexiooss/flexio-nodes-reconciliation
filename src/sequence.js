@@ -4,5 +4,5 @@ import {
 
 var sequence = new Sequence()
 export const getNextSequence = () => {
-  return sequence.getNewId()
+  return sequence.nextID()
 }

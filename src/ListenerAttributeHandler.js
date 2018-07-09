@@ -42,6 +42,7 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
     this.element.addEventListener(type, listener, useCapture)
     return this._addEventListener(type, listener, useCapture)
   }
+
   _addEventListener(type, listener, useCapture) {
     if (!(this.eventListeners().has(type))) {
       this.eventListeners().set(type, this._initEventListenerType())

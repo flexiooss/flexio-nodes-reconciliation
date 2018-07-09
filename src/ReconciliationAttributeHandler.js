@@ -1,7 +1,5 @@
-import {
-  AttributeHandler,
-  assert
-} from 'flexio-jshelpers'
+import {assert} from 'flexio-jshelpers'
+import {AttributeHandler} from 'flexio-hyperflex'
 import {
   KEY_RECONCILIATE_RULES
 } from './constantes'
@@ -30,16 +28,16 @@ class ReconciliationAttributeHandler extends AttributeHandler {
   }
 
   /**
-     * @private
-     *@returns {array}
-     */
+   * @private
+   *@returns {array}
+   */
   _initReconcileRule() {
     return []
   }
 
   /**
-     * @param {Array} rules
-     */
+   * @param {Array} rules
+   */
   addReconcileRules(rules) {
     assert(Array.isArray(rules),
       'flexio-nodes-reconciliation:ReconciliationAttributeHandler:addReconcileRules: `rules` argument assert be an Array `%s` given',
@@ -52,17 +50,18 @@ class ReconciliationAttributeHandler extends AttributeHandler {
   }
 
   /**
-     * @private
-     * @param {String} rule
-     */
+   * @private
+   * @param {String} rule
+   */
   _addReconcileRule(rule) {
     if (this._isAllowedRule(rule) && !this.hasReconciliationRule()) {
       this.reconcileRules().push(rule)
     }
   }
+
   /**
-     * @param {String} rule
-     */
+   * @param {String} rule
+   */
   removeReconcileRule(rule) {
     let index = this.reconcileRules().indexOf(rule)
     if (index > -1) {
@@ -71,13 +70,14 @@ class ReconciliationAttributeHandler extends AttributeHandler {
   }
 
   /**
-     * @private
-     * @param {String} rule
-     */
+   * @private
+   * @param {String} rule
+   */
   _isAllowedRule(rule) {
     return rule in RECONCILIATION_RULES
   }
 }
+
 export const select = ReconciliationAttributeHandler.select
 export {
   ReconciliationAttributeHandler

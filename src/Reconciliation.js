@@ -1,23 +1,9 @@
 'use strict'
-import {
-  isNode,
-  assert,
-  removeChildren
-} from 'flexio-jshelpers'
-import {
-  select
-} from './ListenerAttributeHandler'
-import {
-  nodeReconcile
-} from './NodeReconciliation'
-import {
-  assertUpdateCurrent,
-  listenerReconcile
-} from './ListenerReconciliation'
-
-import {
-  RECONCILIATION_RULES as R
-} from './rules'
+import { isNode, assert, removeChildren } from 'flexio-jshelpers'
+import { select } from './ListenerAttributeHandler'
+import { nodeReconcile } from './NodeReconciliation'
+import { assertUpdateCurrent, listenerReconcile } from './ListenerReconciliation'
+import { RECONCILIATION_RULES as R } from './rules'
 
 const MAX_SLIBINGS_NODES_UPDATE_BY_ID = 50
 

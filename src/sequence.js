@@ -1,8 +1,8 @@
-import {
-  Sequence
-} from 'flexio-jshelpers'
+import {Sequence} from 'flexio-jshelpers'
 
-var sequence = new Sequence()
-export const getNextSequence = () => {
-  return sequence.nextID()
-}
+const sequence = new Sequence()
+/**
+ *
+ * @return {string}
+ */
+export const getNextSequence = () => sequence.nextID()

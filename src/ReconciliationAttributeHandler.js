@@ -8,18 +8,36 @@ import {
 } from './rules'
 
 class ReconciliationAttributeHandler extends AttributeHandler {
-  static select(element, scope) {
-    return new ReconciliationAttributeHandler(element, scope)
+  /**
+   * @static
+   * @param {Node} element
+   * @return {ReconciliationAttributeHandler}
+   */
+  static select(element) {
+    return new ReconciliationAttributeHandler(element)
   }
 
+  /**
+   *
+   * @return {boolean}
+   */
   hasReconciliationRules() {
     return KEY_RECONCILIATE_RULES in this.privateAttribute
   }
 
+  /**
+   *
+   * @param rule
+   * @return {boolean}
+   */
   hasReconciliationRule(rule) {
     return this.reconcileRules().indexOf(rule) > -1
   }
 
+  /**
+   *
+   * @return {string[] | array}
+   */
   reconcileRules() {
     if (!(KEY_RECONCILIATE_RULES in this.privateAttribute)) {
       this.privateAttribute[KEY_RECONCILIATE_RULES] = this._initReconcileRule()
@@ -29,14 +47,14 @@ class ReconciliationAttributeHandler extends AttributeHandler {
 
   /**
    * @private
-   *@returns {array}
+   * @return {array}
    */
   _initReconcileRule() {
     return []
   }
 
   /**
-   * @param {Array} rules
+   * @param {string[]} rules
    */
   addReconcileRules(rules) {
     assert(Array.isArray(rules),
@@ -51,7 +69,7 @@ class ReconciliationAttributeHandler extends AttributeHandler {
 
   /**
    * @private
-   * @param {String} rule
+   * @param {string} rule
    */
   _addReconcileRule(rule) {
     if (this._isAllowedRule(rule) && !this.hasReconciliationRule()) {
@@ -72,6 +90,7 @@ class ReconciliationAttributeHandler extends AttributeHandler {
   /**
    * @private
    * @param {String} rule
+   * @return {boolean}
    */
   _isAllowedRule(rule) {
     return rule in RECONCILIATION_RULES

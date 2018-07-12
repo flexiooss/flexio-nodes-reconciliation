@@ -1,26 +1,33 @@
 'use strict'
-import { isNode, assert, removeChildren } from 'flexio-jshelpers'
-import { select } from './ListenerAttributeHandler'
-import { nodeReconcile } from './NodeReconciliation'
-import { assertUpdateCurrent, listenerReconcile } from './ListenerReconciliation'
-import { RECONCILIATION_RULES as R } from './rules'
+import {isNode, assert, removeChildren} from 'flexio-jshelpers'
+import {select} from './ListenerAttributeHandler'
+import {nodeReconcile} from './NodeReconciliation'
+import {assertUpdateCurrent, listenerReconcile} from './ListenerReconciliation'
+import {RECONCILIATION_RULES as R} from './rules'
 
 const MAX_SLIBINGS_NODES_UPDATE_BY_ID = 50
 
 /**
  *
- * @param {NodeElement} current
- * @param {NodeElement} candidate
- * @param {NodeElement} parentCurrent parent of current element
+ * @param {Node} current
+ * @param {Node} candidate
+ * @param {Node} parentCurrent parent of current element
  */
 
 class Reconciliation {
-  constructor(current, candidate, parentCurrent) {
+  /**
+   *
+   * @param {Node} current
+   * @param {Node} candidate
+   * @param {Node} parentCurrent
+   */
+  constructor(current, candidate, parentCurrent = null) {
     assert(isNode(current) && isNode(candidate),
-      'Reconciliation: `current` and  `candidate` arguments assert be Node')
+      'Reconciliation: `current : %s` and  `candidate : %s` arguments assert be Node',
+      typeof current, typeof candidate)
 
     this.current = current
-    this.parentCurrent = parentCurrent || null
+    this.parentCurrent = parentCurrent
     this.candidate = candidate
     this.harCurrent = select(current)
     this.harCandidate = select(candidate)
@@ -31,11 +38,11 @@ class Reconciliation {
   }
 
   /**
-     * @static
-     * @param {NodeElement} current
-     * @param {NodeElement} candidate
-     * @param {NodeElement} parentCurrent parent of current element
-     */
+   * @static
+   * @param {Node} current
+   * @param {Node} candidate
+   * @param {Node} parentCurrent parent of current element
+   */
   static reconciliation(current, candidate, parentCurrent) {
     new Reconciliation(current, candidate, parentCurrent).reconcile()
   }
@@ -59,21 +66,18 @@ class Reconciliation {
   }
 
   /**
-     *
-     * --------------------------------------------------------------
-     * Actions
-     * --------------------------------------------------------------
-     */
-
+   *
+   * @private
+   */
   _updateCurrent() {
     this._isCurrentReplaced = nodeReconcile(this.current, this.candidate)
   }
 
   /**
-     * @private
-     * @method
-     * @description
-     */
+   * @private
+   * @method
+   * @description
+   */
   _reconcileChildNodes() {
     if (this.candidate.hasChildNodes()) {
       this._traverseChildNodes()
@@ -83,11 +87,10 @@ class Reconciliation {
   }
 
   /**
-     * @private
-     * @method
-     * @description traverse and reconcile slibing's nodes
-     *
-     */
+   * @private
+   * @description traverse and reconcile slibing's nodes
+   *
+   */
   _traverseChildNodes() {
     let candidate = this.candidate.firstChild
     var i = 0
@@ -110,11 +113,11 @@ class Reconciliation {
   }
 
   /**
-     * @private
-     * @param {Int} keyChildNode
-     * @param {NodeElement} candidate
-     * @description search and replace current element if a slibing node has the same id as the candidate
-     */
+   * @private
+   * @param {Number} keyChildNode
+   * @param {Node} candidate
+   * @description search and replace current element if a slibing node has the same id as the candidate
+   */
   _currentById(keyChildNode, candidate) {
     if (!(keyChildNode in this.current.childNodes)) {
       return false
@@ -134,10 +137,10 @@ class Reconciliation {
   }
 
   /**
-     * @private
-     * @param {NodeElement} parentNode
-     * @param {String} id
-     */
+   * @private
+   * @param {Node} parentNode
+   * @param {String} id
+   */
   _findNodeByIdInChildNodes(parentNode, id, start) {
     if (parentNode.childNodes.length > MAX_SLIBINGS_NODES_UPDATE_BY_ID) {
       return false
@@ -150,23 +153,34 @@ class Reconciliation {
   }
 
   /**
-     *
-     * --------------------------------------------------------------
-     * test
-     * --------------------------------------------------------------
-     */
+   *
+   * @return {boolean}
+   * @private
+   */
   _isEqualNode() {
     if (this._equalNode === null) {
       this._equalNode = this.current.isEqualNode(this.candidate)
     }
     return this._equalNode
   }
+
+  /**
+   *
+   * @return {boolean}
+   * @private
+   */
   _isEqualListeners() {
     if (this._equalListeners === null) {
       this._equalListeners = assertUpdateCurrent(this.harCurrent.eventListeners(), this.harCandidate.eventListeners())
     }
     return this._equalListeners
   }
+
+  /**
+   *
+   * @return {boolean}
+   * @private
+   */
   _isEqualWithoutChildren() {
     if (this._equalWithoutChildren === null) {
       this._equalWithoutChildren = this.current.cloneNode(false).isEqualNode(this.candidate.cloneNode(false))
@@ -175,26 +189,37 @@ class Reconciliation {
   }
 
   /**
-     *
-     * --------------------------------------------------------------
-     * Rules
-     * --------------------------------------------------------------
-     */
+   *
+   * @return {boolean}
+   * @private
+   */
   _hasByPathRule() {
     return this.harCurrent.hasReconciliationRule(R.BYPATH)
   }
+
+  /**
+   *
+   * @return {boolean}
+   * @private
+   */
   _hasExcludeChildrenRule() {
     return this.harCurrent.hasReconciliationRule(R.BYPATH_CHILDREN)
   }
+
+  /**
+   *
+   * @return {boolean}
+   * @private
+   */
   _hasExcludeListenersRule() {
     return this.harCurrent.hasReconciliationRule(R.BYPATH_LISTENERS)
   }
+
   /**
-     *
-     * --------------------------------------------------------------
-     * Return
-     * --------------------------------------------------------------
-     */
+   *
+   * @return {boolean} false
+   * @private
+   */
   _abort() {
     return false
   }

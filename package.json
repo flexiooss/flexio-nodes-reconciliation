@@ -2,6 +2,7 @@
   "name": "flexio-nodes-reconciliation",
   "version": "1.0.0",
   "description": "Attempt to reconcile 2 nodes elements",
+  "main": "index.js",
   "module": "index.es.js",
   "repository": "git@github.com:flexiooss/flexio-nodes-reconciliation.git",
   "author": "Thomas Chatelain (https://github.com/TomAchT)",

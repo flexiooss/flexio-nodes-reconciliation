@@ -54,7 +54,7 @@ export class ReconcileNodeProperties {
    * @return {Array<string>}
    * @private
    */
-  get __currentReconcileProperties() {
+  __getCurrentReconcileProperties() {
     if (this.__currentReconcileProperties === null) {
       this.__currentReconcileProperties = this.__$current.reconcileProperties()
     }
@@ -66,7 +66,7 @@ export class ReconcileNodeProperties {
    * @return {Array<string>}
    * @private
    */
-  get __candidateReconcileProperties() {
+  __getCandidateReconcileProperties() {
     if (this.__candidateReconcileProperties === null) {
       this.__candidateReconcileProperties = this.__$candidate.reconcileProperties()
     }
@@ -87,7 +87,7 @@ export class ReconcileNodeProperties {
    * @private
    */
   __updateCurrent() {
-    for (const property of this.__candidateReconcileProperties) {
+    for (const property of this.__getCandidateReconcileProperties()) {
       this.__current[property] = this.__candidate[property]
     }
   }
@@ -97,8 +97,8 @@ export class ReconcileNodeProperties {
    * @private
    */
   __deleteUnusedProperties() {
-    for (const property of this.__currentReconcileProperties) {
-      if (!this.__candidate.hasReconciliationProperty(property) && !(property in this.__candidate)) {
+    for (const property of this.__getCurrentReconcileProperties()) {
+      if (!this.__$candidate.hasReconciliationProperty(property) && !(property in this.__candidate)) {
         delete this.__current[property]
       }
     }

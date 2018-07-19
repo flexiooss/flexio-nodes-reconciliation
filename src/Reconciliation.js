@@ -91,19 +91,19 @@ class Reconciliation {
    * @return {boolean | void}
    */
   reconcile() {
-    if (this._hasByPathRule() || (this._isEqualNode() && this._isEqualListeners())) {
+    if (this.__hasByPathRule() || (this.__isEqualNode() && this.__isEqualListeners())) {
       return this._abort()
     }
-    if (!this._isEqualNode()) {
-      if (!this._isEqualWithoutChildren()) {
-        this._updateCurrent()
+    if (!this.__isEqualNode()) {
+      if (!this.__isEqualWithoutChildren() || this.__hasReplaceRule()) {
+        this.__updateCurrent()
       }
-      if (!this._isCurrentReplaced && !this._hasExcludeChildrenRule()) {
-        this._reconcileChildNodes()
+      if (!this._isCurrentReplaced && !this.__hasExcludeChildrenRule()) {
+        this.__reconcileChildNodes()
       }
     }
 
-    if (!this._hasExcludeListenersRule() && !this._isCurrentReplaced && !this._isEqualListeners()) {
+    if (!this.__hasExcludeListenersRule() && !this._isCurrentReplaced && !this.__isEqualListeners()) {
       listenerReconcile(this.current, this.candidate)
     }
   }
@@ -112,8 +112,8 @@ class Reconciliation {
    *
    * @private
    */
-  _updateCurrent() {
-    this._isCurrentReplaced = nodeReconcile(this.current, this.candidate)
+  __updateCurrent() {
+    this._isCurrentReplaced = nodeReconcile(this.current, this.harCurrent, this.candidate, this.harCandidate)
   }
 
   /**
@@ -121,9 +121,9 @@ class Reconciliation {
    * @method
    * @description
    */
-  _reconcileChildNodes() {
+  __reconcileChildNodes() {
     if (this.candidate.hasChildNodes()) {
-      this._traverseChildNodes()
+      this.__traverseChildNodes()
     } else if (this.current.hasChildNodes()) {
       removeChildren(this.current)
     }
@@ -134,12 +134,12 @@ class Reconciliation {
    * @description traverse and reconcile slibing's nodes
    *
    */
-  _traverseChildNodes() {
+  __traverseChildNodes() {
     let candidate = this.candidate.firstChild
     var i = 0
     do {
       let nextCandidate = candidate.nextSibling
-      let current = this._currentById(i, candidate)
+      let current = this.__currentById(i, candidate)
       if (current) {
         Reconciliation.reconciliation(current, candidate, this.current)
       } else {
@@ -161,7 +161,7 @@ class Reconciliation {
    * @param {Node} candidate
    * @description search and replace current element if a slibing node has the same id as the candidate
    */
-  _currentById(keyChildNode, candidate) {
+  __currentById(keyChildNode, candidate) {
     if (!(keyChildNode in this.current.childNodes)) {
       return false
     }
@@ -169,7 +169,7 @@ class Reconciliation {
       if (this.current.childNodes[keyChildNode].id === candidate.id) {
         return this.current.childNodes[keyChildNode]
       } else {
-        let el = this._findNodeByIdInChildNodes(this.current, candidate.id, keyChildNode)
+        let el = this.__findNodeByIdInChildNodes(this.current, candidate.id, keyChildNode)
         if (isNode(el)) {
           this.current.insertBefore(el, this.current.childNodes[keyChildNode])
           return el
@@ -184,7 +184,7 @@ class Reconciliation {
    * @param {Node} parentNode
    * @param {String} id
    */
-  _findNodeByIdInChildNodes(parentNode, id, start) {
+  __findNodeByIdInChildNodes(parentNode, id, start) {
     if (parentNode.childNodes.length > MAX_SLIBINGS_NODES_UPDATE_BY_ID) {
       return false
     }
@@ -200,7 +200,7 @@ class Reconciliation {
    * @return {boolean}
    * @private
    */
-  _isEqualNode() {
+  __isEqualNode() {
     if (this._equalNode === null) {
       this._equalNode = this.current.isEqualNode(this.candidate)
     }
@@ -212,7 +212,7 @@ class Reconciliation {
    * @return {boolean}
    * @private
    */
-  _isEqualListeners() {
+  __isEqualListeners() {
     if (this._equalListeners === null) {
       this._equalListeners = assertUpdateCurrent(this.harCurrent.eventListeners(), this.harCandidate.eventListeners())
     }
@@ -224,7 +224,7 @@ class Reconciliation {
    * @return {boolean}
    * @private
    */
-  _isEqualWithoutChildren() {
+  __isEqualWithoutChildren() {
     if (this._equalWithoutChildren === null) {
       this._equalWithoutChildren = this.current.cloneNode(false).isEqualNode(this.candidate.cloneNode(false))
     }
@@ -236,8 +236,8 @@ class Reconciliation {
    * @return {boolean}
    * @private
    */
-  _hasByPathRule() {
-    return this.harCurrent.hasReconciliationRule(R.BYPATH)
+  __hasByPathRule() {
+    return this.harCandidate.hasReconciliationRule(R.BYPATH)
   }
 
   /**
@@ -245,8 +245,8 @@ class Reconciliation {
    * @return {boolean}
    * @private
    */
-  _hasExcludeChildrenRule() {
-    return this.harCurrent.hasReconciliationRule(R.BYPATH_CHILDREN)
+  __hasExcludeChildrenRule() {
+    return this.harCandidate.hasReconciliationRule(R.BYPATH_CHILDREN)
   }
 
   /**
@@ -254,8 +254,17 @@ class Reconciliation {
    * @return {boolean}
    * @private
    */
-  _hasExcludeListenersRule() {
-    return this.harCurrent.hasReconciliationRule(R.BYPATH_LISTENERS)
+  __hasExcludeListenersRule() {
+    return this.harCandidate.hasReconciliationRule(R.BYPATH_LISTENERS)
+  }
+
+  /**
+   *
+   * @return {boolean}
+   * @private
+   */
+  __hasReplaceRule() {
+    return this.harCandidate.hasReconciliationRule(R.REPLACE)
   }
 
   /**

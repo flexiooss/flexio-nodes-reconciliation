@@ -9,6 +9,7 @@ import {
   select as $
 } from './ListenerAttributeHandler'
 import {ReconcileNodeProperties} from './ReconcileNodeProperties'
+import {RECONCILIATION_RULES as R} from './rules'
 
 const EXCLUDES_ATTRIBUTES = ['class', 'id']
 
@@ -16,9 +17,11 @@ class NodeReconciliation {
   /**
    *
    * @param {Node} current
+   * @param {ListenerAttributeHandler} $current
    * @param {Node} candidate
+   * @param {ListenerAttributeHandler} $candidate
    */
-  constructor(current, candidate) {
+  constructor(current, $current, candidate, $candidate) {
     assert(isNode(current) && isNode(candidate),
       'NodeReconciliation: `current` and  `candidate` arguments assert be Node')
     /**
@@ -30,14 +33,27 @@ class NodeReconciliation {
      *
      * @type {Node}
      */
+    this.$current = $current
+    /**
+     *
+     * @type {Node}
+     */
     this.candidate = candidate
+    /**
+     *
+     * @type {Node}
+     */
+    this.$candidate = $candidate
   }
 
-  static nodeReconciliation(current, candidate) {
-    return new NodeReconciliation(current, candidate).reconcile()
+  static nodeReconciliation(current, $current, candidate, $candidate) {
+    return new NodeReconciliation(current, $current, candidate, $candidate).reconcile()
   }
 
   reconcile() {
+    if (this.__hasReplaceRule()) {
+      return this.__replaceWith(this.current, this.candidate)
+    }
     if (isNodeText(this.candidate)) {
       return this.__updateText()
     } else if (this.current.tagName && this.current.tagName === this.candidate.tagName) {
@@ -116,6 +132,15 @@ class NodeReconciliation {
         }
       }
     }
+  }
+
+  /**
+   *
+   * @return {boolean}
+   * @private
+   */
+  __hasReplaceRule() {
+    return this.$candidate.hasReconciliationRule(R.REPLACE)
   }
 }
 

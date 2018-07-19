@@ -8,15 +8,28 @@ import {
 import {
   select as $
 } from './ListenerAttributeHandler'
+import {ReconcileNodeProperties} from './ReconcileNodeProperties'
 
 const EXCLUDES_ATTRIBUTES = ['class', 'id']
 
 class NodeReconciliation {
+  /**
+   *
+   * @param {Node} current
+   * @param {Node} candidate
+   */
   constructor(current, candidate) {
     assert(isNode(current) && isNode(candidate),
       'NodeReconciliation: `current` and  `candidate` arguments assert be Node')
-
+    /**
+     *
+     * @type {Node}
+     */
     this.current = current
+    /**
+     *
+     * @type {Node}
+     */
     this.candidate = candidate
   }
 
@@ -26,26 +39,40 @@ class NodeReconciliation {
 
   reconcile() {
     if (isNodeText(this.candidate)) {
-      return this._updateText()
+      return this.__updateText()
     } else if (this.current.tagName && this.current.tagName === this.candidate.tagName) {
       this._updateClassList()
       this._updateAttr()
+      new ReconcileNodeProperties(this.current, this.candidate).process()
     } else {
-      return this._replaceWith(this.current, this.candidate)
+      return this.__replaceWith(this.current, this.candidate)
     }
     return false
   }
-  _replaceWith(current, candidate) {
+
+  /**
+   *
+   * @param {Node} current
+   * @param {Node} candidate
+   * @return {boolean}
+   * @private
+   */
+  __replaceWith(current, candidate) {
     $(current).cleanListeners()
     current.replaceWith(candidate)
     return true
   }
 
-  _updateText() {
+  /**
+   *
+   * @return {boolean}
+   * @private
+   */
+  __updateText() {
     if (isNodeText(this.current) && (this.candidate.nodeValue !== this.current.nodeValue)) {
       this.current.nodeValue = this.candidate.nodeValue
     } else {
-      return this._replaceWith(this.current, this.candidate)
+      return this.__replaceWith(this.current, this.candidate)
     }
     return false
   }

@@ -4,7 +4,7 @@ export {
   from './src/Reconciliation'
 
 export {
-  ListenerAttributeHandler
+  ListenerAttributeHandler as AttributeHandler
 }
   from './src/ListenerAttributeHandler'
 

@@ -25,15 +25,54 @@ class Reconciliation {
     assert(isNode(current) && isNode(candidate),
       'Reconciliation: `current : %s` and  `candidate : %s` arguments assert be Node',
       typeof current, typeof candidate)
-
+    /**
+     *
+     * @type {Node}
+     */
     this.current = current
+    /**
+     *
+     * @type {Node | null}
+     */
     this.parentCurrent = parentCurrent
+    /**
+     *
+     * @type {Node}
+     */
     this.candidate = candidate
+    /**
+     *
+     * @type {ListenerAttributeHandler}
+     */
     this.harCurrent = select(current)
+    /**
+     *
+     * @type {ListenerAttributeHandler}
+     */
     this.harCandidate = select(candidate)
+    /**
+     *
+     * @type {null | boolean}
+     * @private
+     */
     this._equalNode = null
+    /**
+     *
+     * @type {null | boolean}
+     * @private
+     */
     this._equalListeners = null
+    /**
+     *
+     * @type {null | boolean}
+     * @private
+     */
     this._equalWithoutChildren = null
+    /**
+     *
+     * @type {boolean}
+     * @private
+     */
     this._isCurrentReplaced = false
   }
 
@@ -47,6 +86,10 @@ class Reconciliation {
     new Reconciliation(current, candidate, parentCurrent).reconcile()
   }
 
+  /**
+   *
+   * @return {boolean | void}
+   */
   reconcile() {
     if (this._hasByPathRule() || (this._isEqualNode() && this._isEqualListeners())) {
       return this._abort()

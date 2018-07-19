@@ -1,12 +1,16 @@
 import {AttributeHandler} from 'flexio-hyperflex'
 import {assert} from 'flexio-jshelpers'
 import {
-  KEY_RECONCILIATE_RULES
+  KEY_RECONCILIATE_RULES,
+  KEY_RECONCILIATE_PROPERTIES
 } from './constantes'
 import {
   RECONCILIATION_RULES
 } from './rules'
 
+/**
+ * @extends AttributeHandler
+ */
 class ReconciliationAttributeHandler extends AttributeHandler {
   /**
    * @static
@@ -27,7 +31,24 @@ class ReconciliationAttributeHandler extends AttributeHandler {
 
   /**
    *
-   * @param rule
+   * @return {boolean}
+   */
+  hasReconciliationProperties() {
+    return KEY_RECONCILIATE_PROPERTIES in this.privateAttribute
+  }
+
+  /**
+   *
+   * @param {string} rule
+   * @return {boolean}
+   */
+  hasReconciliationProperty(property) {
+    return this.reconcileProperties().indexOf(property) > -1
+  }
+
+  /**
+   *
+   * @param {string} rule
    * @return {boolean}
    */
   hasReconciliationRule(rule) {
@@ -36,34 +57,53 @@ class ReconciliationAttributeHandler extends AttributeHandler {
 
   /**
    *
-   * @return {string[] | array}
+   * @return {array<string>}
    */
   reconcileRules() {
     if (!(KEY_RECONCILIATE_RULES in this.privateAttribute)) {
-      this.privateAttribute[KEY_RECONCILIATE_RULES] = this._initReconcileRule()
+      this.privateAttribute[KEY_RECONCILIATE_RULES] = this.__initReconcileRule()
     }
     return this.privateAttribute[KEY_RECONCILIATE_RULES]
+  }
+
+  /**
+   *
+   * @return {array<string>}
+   */
+  reconcileProperties() {
+    if (!(KEY_RECONCILIATE_PROPERTIES in this.privateAttribute)) {
+      this.privateAttribute[KEY_RECONCILIATE_PROPERTIES] = this.__initReconcileProperties()
+    }
+    return this.privateAttribute[KEY_RECONCILIATE_PROPERTIES]
   }
 
   /**
    * @private
    * @return {array}
    */
-  _initReconcileRule() {
+  __initReconcileRule() {
     return []
   }
 
   /**
-   * @param {string[]} rules
+   * @private
+   * @return {array}
+   */
+  __initReconcileProperties() {
+    return []
+  }
+
+  /**
+   * @param {array<strring>} rules
    */
   addReconcileRules(rules) {
     assert(Array.isArray(rules),
       'flexio-nodes-reconciliation:ReconciliationAttributeHandler:addReconcileRules: `rules` argument assert be an Array `%s` given',
-      typeof element
+      typeof rules
     )
 
-    for (let i = rules.length - 1; i >= 0; i--) {
-      this._addReconcileRule(rules[i])
+    for (const rule of rules) {
+      this.__addReconcileRule(rule)
     }
   }
 
@@ -71,8 +111,8 @@ class ReconciliationAttributeHandler extends AttributeHandler {
    * @private
    * @param {string} rule
    */
-  _addReconcileRule(rule) {
-    if (this._isAllowedRule(rule) && !this.hasReconciliationRule()) {
+  __addReconcileRule(rule) {
+    if (this.__isAllowedRule(rule) && !this.hasReconciliationRule()) {
       this.reconcileRules().push(rule)
     }
   }
@@ -81,7 +121,7 @@ class ReconciliationAttributeHandler extends AttributeHandler {
    * @param {String} rule
    */
   removeReconcileRule(rule) {
-    let index = this.reconcileRules().indexOf(rule)
+    const index = this.reconcileRules().indexOf(rule)
     if (index > -1) {
       this.reconcileRules().splice(index, 1)
     }
@@ -92,8 +132,40 @@ class ReconciliationAttributeHandler extends AttributeHandler {
    * @param {String} rule
    * @return {boolean}
    */
-  _isAllowedRule(rule) {
+  __isAllowedRule(rule) {
     return rule in RECONCILIATION_RULES
+  }
+
+  /**
+   * @param {Array<string>} properties
+   */
+  addReconcileProperties(properties) {
+    assert(Array.isArray(properties),
+      'flexio-nodes-reconciliation:ReconciliationAttributeHandler:addReconcileProperties: `properties` argument assert be an Array `%s` given',
+      typeof properties
+    )
+
+    for (const property of properties) {
+      this.__addReconcileProperty(property)
+    }
+  }
+
+  /**
+   * @private
+   * @param {string} property
+   */
+  __addReconcileProperty(property) {
+    this.reconcileProperties().push(property)
+  }
+
+  /**
+   * @param {String} property
+   */
+  removeReconcileProperty(property) {
+    const index = this.reconcileProperties().indexOf(property)
+    if (index > -1) {
+      this.reconcileProperties().splice(index, 1)
+    }
   }
 }
 

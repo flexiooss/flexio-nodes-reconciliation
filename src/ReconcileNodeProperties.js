@@ -49,6 +49,15 @@ export class ReconcileNodeProperties {
     this.__candidateReconcileProperties = null
   }
 
+  process() {
+    if (!this.__$candidate.hasReconciliationProperties() && !this.__$current.hasReconciliationProperties()) {
+      return false
+    }
+
+    this.__updateCurrent()
+    this.__deleteUnusedProperties()
+  }
+
   /**
    *
    * @return {Array<string>}
@@ -71,15 +80,6 @@ export class ReconcileNodeProperties {
       this.__candidateReconcileProperties = this.__$candidate.reconcileProperties()
     }
     return this.__candidateReconcileProperties
-  }
-
-  process() {
-    if (!this.__$candidate.hasReconciliationProperties() && !this.__$current.hasReconciliationProperties()) {
-      return false
-    }
-
-    this.__updateCurrent()
-    this.__deleteUnusedProperties()
   }
 
   /**

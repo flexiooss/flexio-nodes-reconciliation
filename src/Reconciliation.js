@@ -1,5 +1,5 @@
 'use strict'
-import {isNode, assert, removeChildren} from 'flexio-jshelpers'
+import {isNode, assert, removeChildNodes} from 'flexio-jshelpers'
 import {select} from './ListenerAttributeHandler'
 import {nodeReconcile} from './NodeReconciliation'
 import {assertUpdateCurrent, listenerReconcile} from './ListenerReconciliation'
@@ -125,7 +125,7 @@ class Reconciliation {
     if (this.candidate.hasChildNodes()) {
       this.__traverseChildNodes()
     } else if (this.current.hasChildNodes()) {
-      removeChildren(this.current)
+      removeChildNodes(this.current)
     }
   }
 
@@ -151,7 +151,7 @@ class Reconciliation {
     } while (candidate)
 
     if (this.current.childNodes.length > this.candidate.childNodes.length) {
-      removeChildren(this.current, i)
+      removeChildNodes(this.current, i)
     }
   }
 

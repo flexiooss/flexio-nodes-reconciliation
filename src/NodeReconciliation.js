@@ -1,13 +1,6 @@
 'use strict'
-import {
-  isNode,
-  assert,
-  isNodeText
-} from 'flexio-jshelpers'
-
-import {
-  select as $
-} from './ListenerAttributeHandler'
+import {isNode, assert, isNodeText} from 'flexio-jshelpers'
+import {select as $} from './ListenerAttributeHandler'
 import {ReconcileNodeProperties} from './ReconcileNodeProperties'
 import {RECONCILIATION_RULES as R} from './rules'
 import {ReconcilePrivateAttribute} from './ReconcilePrivateAttribute'

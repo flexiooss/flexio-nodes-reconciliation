@@ -1,11 +1,6 @@
 'use strict'
-import {
-  isNode,
-  assert
-} from 'flexio-jshelpers'
-import {
-  select
-} from './ListenerAttributeHandler'
+import {isNode, assert} from 'flexio-jshelpers'
+import {select} from './ListenerAttributeHandler'
 
 /**
  * @param {NodeElement} current
@@ -23,19 +18,19 @@ class ListenerReconciliation {
   }
 
   /**
-     * @static
-     * @param {NodeElement} current
-     * @param {NodeElement} candidate
-     */
+   * @static
+   * @param {NodeElement} current
+   * @param {NodeElement} candidate
+   */
   static listenerReconciliation(current, candidate) {
     new ListenerReconciliation(current, candidate).reconcile()
   }
 
   /**
-     * @static
-     * @param {ListenerAttributeHandler} current
-     * @param {ListenerAttributeHandler} candidate
-     */
+   * @static
+   * @param {ListenerAttributeHandler} current
+   * @param {ListenerAttributeHandler} candidate
+   */
   static assertUpdateCurrent(current, candidate) {
     var ret = true
 
@@ -70,8 +65,8 @@ class ListenerReconciliation {
   }
 
   /**
-     * @private
-     */
+   * @private
+   */
   _traverseTypes() {
     this.harCandidate.eventListeners().forEach((value, key, map) => {
       if (!this.harCurrent.eventListeners().has(key)) {
@@ -89,9 +84,9 @@ class ListenerReconciliation {
   }
 
   /**
-     * @private
-     * @param {String} type : type of event
-     */
+   * @private
+   * @param {String} type : type of event
+   */
   _updateCurrent(type) {
     let currentSet = this.harCurrent.eventListeners().get(type)
     let candidateSet = this.harCandidate.eventListeners().get(type)
@@ -109,9 +104,9 @@ class ListenerReconciliation {
   }
 
   /**
-     * @private
-     * @param {String} type : type of event
-     */
+   * @private
+   * @param {String} type : type of event
+   */
   _removeAllListeners(type) {
     this.harCurrent.eventListeners().get(type)
       .forEach((value, key, set) => {
@@ -120,9 +115,9 @@ class ListenerReconciliation {
   }
 
   /**
-     * @private
-     * @param {String} type : type of event
-     */
+   * @private
+   * @param {String} type : type of event
+   */
   _addAllListeners(type) {
     this.harCandidate.eventListeners().get(type)
       .forEach((value, key, set) => {
@@ -131,20 +126,20 @@ class ListenerReconciliation {
   }
 
   /**
-     * @private
-     * @param {String} type : type of event
-     * @param {String} key of Listener Map entry
-     */
+   * @private
+   * @param {String} type : type of event
+   * @param {String} key of Listener Map entry
+   */
   _removeEventListener(type, key) {
     this.harCurrent.off(type, key)
   }
 
   /**
-     * @private
-     * @param {String} type : type of event
-     * @param {Function} listener
-     * @param {Boolean} useCapture
-     */
+   * @private
+   * @param {String} type : type of event
+   * @param {Function} listener
+   * @param {Boolean} useCapture
+   */
   _addEventListener(type, listener, useCapture) {
     this.harCurrent.on(type, listener, useCapture)
   }

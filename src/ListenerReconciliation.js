@@ -13,8 +13,8 @@ class ListenerReconciliation {
 
     this.current = current
     this.candidate = candidate
-    this.harCurrent = select(current)
-    this.harCandidate = select(candidate)
+    this.$current = select(current)
+    this.$candidate = select(candidate)
   }
 
   /**
@@ -68,16 +68,16 @@ class ListenerReconciliation {
    * @private
    */
   _traverseTypes() {
-    this.harCandidate.eventListeners().forEach((value, key, map) => {
-      if (!this.harCurrent.eventListeners().has(key)) {
+    this.$candidate.eventListeners().forEach((value, key, map) => {
+      if (!this.$current.eventListeners().has(key)) {
         this._addAllListeners(key)
       } else {
         this._updateCurrent(key)
       }
     })
 
-    this.harCurrent.eventListeners().forEach((value, key, map) => {
-      if (!this.harCandidate.eventListeners().has(key)) {
+    this.$current.eventListeners().forEach((value, key, map) => {
+      if (!this.$candidate.eventListeners().has(key)) {
         this._removeAllListeners(key)
       }
     })
@@ -88,8 +88,8 @@ class ListenerReconciliation {
    * @param {String} type : type of event
    */
   _updateCurrent(type) {
-    let currentSet = this.harCurrent.eventListeners().get(type)
-    let candidateSet = this.harCandidate.eventListeners().get(type)
+    let currentSet = this.$current.eventListeners().get(type)
+    let candidateSet = this.$candidate.eventListeners().get(type)
 
     currentSet.forEach((value, key, set) => {
       if (!candidateSet.has(key)) {
@@ -98,7 +98,7 @@ class ListenerReconciliation {
     })
     candidateSet.forEach((value, key, set) => {
       if (!currentSet.has(key)) {
-        this._addEventListener(value.type, value.listener, value.useCapture)
+        this._addEventListener(value.type, value.listener, value.options)
       }
     })
   }
@@ -108,7 +108,7 @@ class ListenerReconciliation {
    * @param {String} type : type of event
    */
   _removeAllListeners(type) {
-    this.harCurrent.eventListeners().get(type)
+    this.$current.eventListeners().get(type)
       .forEach((value, key, set) => {
         this._removeEventListener(value.type, key)
       })
@@ -119,9 +119,9 @@ class ListenerReconciliation {
    * @param {String} type : type of event
    */
   _addAllListeners(type) {
-    this.harCandidate.eventListeners().get(type)
+    this.$candidate.eventListeners().get(type)
       .forEach((value, key, set) => {
-        this._addEventListener(value.type, value.listener, value.useCapture)
+        this._addEventListener(value.type, value.listener, value.options)
       })
   }
 
@@ -131,17 +131,17 @@ class ListenerReconciliation {
    * @param {String} key of Listener Map entry
    */
   _removeEventListener(type, key) {
-    this.harCurrent.off(type, key)
+    this.$current.off(type, key)
   }
 
   /**
    * @private
    * @param {String} type : type of event
    * @param {Function} listener
-   * @param {Boolean} useCapture
+   * @param {Object} options
    */
-  _addEventListener(type, listener, useCapture) {
-    this.harCurrent.on(type, listener, useCapture)
+  _addEventListener(type, listener, options) {
+    this.$current.on(type, listener, options)
   }
 }
 

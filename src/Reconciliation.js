@@ -44,12 +44,12 @@ class Reconciliation {
      *
      * @type {ListenerAttributeHandler}
      */
-    this.harCurrent = select(current)
+    this.$current = select(current)
     /**
      *
      * @type {ListenerAttributeHandler}
      */
-    this.harCandidate = select(candidate)
+    this.$candidate = select(candidate)
     /**
      *
      * @type {null | boolean}
@@ -113,7 +113,7 @@ class Reconciliation {
    * @private
    */
   __updateCurrent() {
-    this._isCurrentReplaced = nodeReconcile(this.current, this.harCurrent, this.candidate, this.harCandidate)
+    this._isCurrentReplaced = nodeReconcile(this.current, this.$current, this.candidate, this.$candidate)
   }
 
   /**
@@ -214,7 +214,7 @@ class Reconciliation {
    */
   __isEqualListeners() {
     if (this._equalListeners === null) {
-      this._equalListeners = assertUpdateCurrent(this.harCurrent.eventListeners(), this.harCandidate.eventListeners())
+      this._equalListeners = assertUpdateCurrent(this.$current.eventListeners(), this.$candidate.eventListeners())
     }
     return this._equalListeners
   }
@@ -237,7 +237,7 @@ class Reconciliation {
    * @private
    */
   __hasByPathRule() {
-    return this.harCandidate.hasReconciliationRule(R.BYPATH)
+    return this.$candidate.hasReconciliationRule(R.BYPATH)
   }
 
   /**
@@ -246,7 +246,7 @@ class Reconciliation {
    * @private
    */
   __hasExcludeChildrenRule() {
-    return this.harCandidate.hasReconciliationRule(R.BYPATH_CHILDREN)
+    return this.$candidate.hasReconciliationRule(R.BYPATH_CHILDREN)
   }
 
   /**
@@ -255,7 +255,7 @@ class Reconciliation {
    * @private
    */
   __hasExcludeListenersRule() {
-    return this.harCandidate.hasReconciliationRule(R.BYPATH_LISTENERS)
+    return this.$candidate.hasReconciliationRule(R.BYPATH_LISTENERS)
   }
 
   /**
@@ -264,7 +264,7 @@ class Reconciliation {
    * @private
    */
   __hasReplaceRule() {
-    return this.harCandidate.hasReconciliationRule(R.REPLACE)
+    return this.$candidate.hasReconciliationRule(R.REPLACE)
   }
 
   /**

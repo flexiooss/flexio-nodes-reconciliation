@@ -52,9 +52,9 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
    * @param {Boolean} useCapture
    * @return {string}
    */
-  on(type, listener, useCapture = false) {
-    this.element.addEventListener(type, listener, useCapture)
-    return this._addEventListener(type, listener, useCapture)
+  on(type, listener, options) {
+    this.element.addEventListener(type, listener, options)
+    return this._addEventListener(type, listener, options)
   }
 
   /**
@@ -65,14 +65,14 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
    * @return {string}
    * @private
    */
-  _addEventListener(type, listener, useCapture) {
+  _addEventListener(type, listener, options) {
     if (!(this.eventListeners().has(type))) {
       this.eventListeners().set(type, this._initEventListenerType())
     }
     let token = getNextSequence()
     this.eventListeners().get(type).set(
       token,
-      this._formatListenerShallow(type, listener, useCapture)
+      this._formatListenerShallow(type, listener, options)
     )
     return token
   }
@@ -87,7 +87,7 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
   off(type, key) {
     if (this._hasEventKey(type, key)) {
       let listener = this.eventListeners().get(type).get(key)
-      this._elementRemoveListener(listener.type, listener.listener, listener.useCapture)
+      this._elementRemoveListener(listener.type, listener.listener, listener.options)
       this._removeEventListenerByKey(type, key)
     }
   }
@@ -96,11 +96,11 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
    *
    * @param t{string} ype
    * @param {function} listener
-   * @param {boolean} useCapture
+   * @param {Object} options
    * @private
    */
-  _elementRemoveListener(type, listener, useCapture) {
-    this.element.removeEventListener(type, listener, useCapture)
+  _elementRemoveListener(type, listener, options) {
+    this.element.removeEventListener(type, listener, options)
   }
 
   /**
@@ -110,7 +110,7 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
     if (this.eventListeners().size) {
       this.eventListeners().forEach((value, key, map) => {
         value.forEach((v, k, m) => {
-          this._elementRemoveListener(v.type, v.listener, v.useCapture)
+          this._elementRemoveListener(v.type, v.listener, v.options)
         })
       })
     }
@@ -132,15 +132,15 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
    *
    * @param {string} type
    * @param {function} listener
-   * @param {boolean} useCapture
+   * @param {Object} options
    * @return {{type: string, listener: function, useCapture: boolean}}
    * @private
    */
-  _formatListenerShallow(type, listener, useCapture) {
+  _formatListenerShallow(type, listener, options) {
     return deepFreezeSeal({
       type: type,
       listener: listener,
-      useCapture: useCapture
+      options: options
     })
   }
 

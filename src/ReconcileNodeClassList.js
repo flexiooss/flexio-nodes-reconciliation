@@ -1,7 +1,5 @@
 import {AbstractReconcileNode} from './AbstractReconcileNode'
 
-const EXCLUDES_ATTRIBUTES = ['class', 'id']
-
 /**
  * @implements ReconcileNodeInterface
  * @extends AbstractReconcileNode

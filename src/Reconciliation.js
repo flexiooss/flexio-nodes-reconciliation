@@ -104,7 +104,7 @@ class Reconciliation {
     }
 
     if (!this.__hasExcludeListenersRule() && !this._isCurrentReplaced && !this.__isEqualListeners()) {
-      listenerReconcile(this.current, this.candidate)
+      listenerReconcile(this.current, this.$current, this.candidate, this.$candidate)
     }
   }
 

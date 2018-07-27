@@ -1,20 +1,26 @@
 'use strict'
 import {isNode, assert} from 'flexio-jshelpers'
-import {select} from './ListenerAttributeHandler'
 
 /**
  * @param {NodeElement} current
  * @param {NodeElement} candidate
  */
 class ListenerReconciliation {
-  constructor(current, candidate) {
+  /**
+   *
+   * @param {Node} current
+   * @param {ListenerAttributeHandler} $current
+   * @param {Node} candidate
+   * @param {ListenerAttributeHandler} $candidate
+   */
+  constructor(current, $current, candidate, $candidate) {
     assert(isNode(current) && isNode(candidate),
       'EventReconciliation: `current` and  `candidate` arguments assert be Node')
 
     this.current = current
+    this.$current = $current
     this.candidate = candidate
-    this.$current = select(current)
-    this.$candidate = select(candidate)
+    this.$candidate = $candidate
   }
 
   /**
@@ -22,27 +28,27 @@ class ListenerReconciliation {
    * @param {NodeElement} current
    * @param {NodeElement} candidate
    */
-  static listenerReconciliation(current, candidate) {
-    new ListenerReconciliation(current, candidate).reconcile()
+  static listenerReconciliation(current, $current, candidate, $candidate) {
+    new ListenerReconciliation(current, $current, candidate, $candidate).reconcile()
   }
 
   /**
    * @static
-   * @param {ListenerAttributeHandler} current
-   * @param {ListenerAttributeHandler} candidate
+   * @param {Map<string, Map<string, EventListenerParam>>} currentEventsListeners
+   * @param {Map<string, Map<string, EventListenerParam>>} candidateEventsListeners
    */
-  static assertUpdateCurrent(current, candidate) {
+  static assertUpdateCurrent(currentEventsListeners, candidateEventsListeners) {
     var ret = true
 
     const test = (a, b) => {
-      a.forEach((value, key, map) => {
-        if (value.size && !b.has(key)) {
+      a.forEach((listener, token, map) => {
+        if (listener.size && !b.has(token)) {
           ret = false
           return false
         }
-        if (value instanceof Map) {
-          let bListeners = b.get(key)
-          value.forEach((value, key, map) => {
+        if (listener instanceof Map) {
+          let bListeners = b.get(token)
+          listener.forEach((value, key, map) => {
             if (!bListeners.has(key)) {
               ret = false
               return false
@@ -52,10 +58,10 @@ class ListenerReconciliation {
       })
     }
 
-    test(candidate, current)
+    test(candidateEventsListeners, currentEventsListeners)
 
     if (ret) {
-      test(current, candidate)
+      test(currentEventsListeners, candidateEventsListeners)
     }
     return ret
   }
@@ -68,80 +74,78 @@ class ListenerReconciliation {
    * @private
    */
   _traverseTypes() {
-    this.$candidate.eventListeners().forEach((value, key, map) => {
-      if (!this.$current.eventListeners().has(key)) {
-        this._addAllListeners(key)
+    this.$candidate.eventListeners().forEach((listener, token, map) => {
+      if (!this.$current.eventListeners().has(token)) {
+        this._addAllListeners(token)
       } else {
-        this._updateCurrent(key)
+        this._updateCurrent(token)
       }
     })
 
-    this.$current.eventListeners().forEach((value, key, map) => {
-      if (!this.$candidate.eventListeners().has(key)) {
-        this._removeAllListeners(key)
-      }
-    })
-  }
-
-  /**
-   * @private
-   * @param {String} type : type of event
-   */
-  _updateCurrent(type) {
-    let currentSet = this.$current.eventListeners().get(type)
-    let candidateSet = this.$candidate.eventListeners().get(type)
-
-    currentSet.forEach((value, key, set) => {
-      if (!candidateSet.has(key)) {
-        this._removeEventListener(value.type, key)
-      }
-    })
-    candidateSet.forEach((value, key, set) => {
-      if (!currentSet.has(key)) {
-        this._addEventListener(value.type, value.listener, value.options)
+    this.$current.eventListeners().forEach((listener, token, map) => {
+      if (!this.$candidate.eventListeners().has(token)) {
+        this._removeAllListeners(token)
       }
     })
   }
 
   /**
    * @private
-   * @param {String} type : type of event
+   * @param {String} event : type of event
    */
-  _removeAllListeners(type) {
-    this.$current.eventListeners().get(type)
-      .forEach((value, key, set) => {
-        this._removeEventListener(value.type, key)
+  _updateCurrent(event) {
+    const currentListenersMap = this.$current.eventListeners().get(event)
+    const candidateListenersMap = this.$candidate.eventListeners().get(event)
+
+    currentListenersMap.forEach((listener, token, set) => {
+      if (!candidateListenersMap.has(token)) {
+        this._removeEventListener(listener.event, token)
+      }
+    })
+    candidateListenersMap.forEach((listener, token, set) => {
+      if (!currentListenersMap.has(token)) {
+        this._addEventListener(listener)
+      }
+    })
+  }
+
+  /**
+   * @private
+   * @param {String} event : type of event
+   */
+  _removeAllListeners(event) {
+    this.$current.eventListeners().get(event)
+      .forEach((listener, token, set) => {
+        this._removeEventListener(listener.event, token)
       })
   }
 
   /**
    * @private
-   * @param {String} type : type of event
+   * @param {String} event : type of event
    */
-  _addAllListeners(type) {
-    this.$candidate.eventListeners().get(type)
-      .forEach((value, key, set) => {
-        this._addEventListener(value.type, value.listener, value.options)
+  _addAllListeners(event) {
+    this.$candidate.eventListeners().get(event)
+      .forEach((listener, token, set) => {
+        this._addEventListener(listener)
       })
   }
 
   /**
    * @private
-   * @param {String} type : type of event
-   * @param {String} key of Listener Map entry
+   * @param {String} event : type of event
+   * @param {String} token of Listener Map entry
    */
-  _removeEventListener(type, key) {
-    this.$current.off(type, key)
+  _removeEventListener(event, token) {
+    this.$current.off(event, token)
   }
 
   /**
    * @private
-   * @param {String} type : type of event
-   * @param {Function} listener
-   * @param {Object} options
+   * @param {EventListenerParam} listener : type of event
    */
-  _addEventListener(type, listener, options) {
-    this.$current.on(type, listener, options)
+  _addEventListener(listener) {
+    this.$current.on(listener)
   }
 }
 

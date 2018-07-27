@@ -1,4 +1,3 @@
-import {deepFreezeSeal} from 'flexio-jshelpers'
 import {ReconciliationAttributeHandler} from './ReconciliationAttributeHandler'
 import {KEY_EVENT_WRAPPER} from './constantes'
 import {getNextSequence} from './sequence'
@@ -6,7 +5,7 @@ import {getNextSequence} from './sequence'
 /**
  * @extends ReconciliationAttributeHandler
  */
-class ListenerAttributeHandler extends ReconciliationAttributeHandler {
+export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
   /**
    * @static
    * @param {Node} element
@@ -47,32 +46,33 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    * @description add to shallow copy type listened for cloning the elementement easier
-   * @param {String} type of event
-   * @param {Function} listener
-   * @param {Boolean} useCapture
+   * @param {EventListenerParam} nodeEventListenerParam of event
    * @return {string}
    */
-  on(type, listener, options) {
-    this.element.addEventListener(type, listener, options)
-    return this._addEventListener(type, listener, options)
+  on(nodeEventListenerParam) {
+    this.element.addEventListener(
+      nodeEventListenerParam.event,
+      nodeEventListenerParam.callback,
+      nodeEventListenerParam.options
+    )
+    return this._addEventListener(nodeEventListenerParam)
   }
 
   /**
    *
-   * @param {string} type
-   * @param {function} listener
-   * @param {boolean} useCapture
+   * @param {EventListenerParam} nodeEventListenerParam
    * @return {string}
    * @private
    */
-  _addEventListener(type, listener, options) {
-    if (!(this.eventListeners().has(type))) {
-      this.eventListeners().set(type, this._initEventListenerType())
+  _addEventListener(nodeEventListenerParam) {
+    if (!(this.eventListeners().has(nodeEventListenerParam.event))) {
+      this.eventListeners().set(nodeEventListenerParam.event, this._initEventListenerType())
     }
-    let token = getNextSequence()
-    this.eventListeners().get(type).set(
+    const token = getNextSequence()
+    this.eventListeners().get(nodeEventListenerParam.event).set(
       token,
-      this._formatListenerShallow(type, listener, options)
+      nodeEventListenerParam
+      // this._formatListenerShallow(type, listener, options)
     )
     return token
   }
@@ -80,27 +80,25 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
   /**
    * @function off
    * @description remove from shallow copy type listened
-   * @param {String} type of event
-   * @param {String} key of listener
+   * @param {String} event of event
+   * @param {String} token of listener
    */
 
-  off(type, key) {
-    if (this._hasEventKey(type, key)) {
-      let listener = this.eventListeners().get(type).get(key)
-      this._elementRemoveListener(listener.type, listener.listener, listener.options)
-      this._removeEventListenerByKey(type, key)
+  off(event, token) {
+    if (this._hasEventKey(event, token)) {
+      const nodeEventListenerParam = this.eventListeners().get(event).get(token)
+      this._elementRemoveListener(nodeEventListenerParam.event, nodeEventListenerParam.callback, nodeEventListenerParam.options)
+      this._removeEventListenerByKey(event, token)
     }
   }
 
   /**
    *
-   * @param t{string} ype
-   * @param {function} listener
-   * @param {Object} options
+   * @param {EventListenerParam} nodeEventListenerParam
    * @private
    */
-  _elementRemoveListener(type, listener, options) {
-    this.element.removeEventListener(type, listener, options)
+  _elementRemoveListener(nodeEventListenerParam) {
+    this.element.removeEventListener(nodeEventListenerParam.event, nodeEventListenerParam.callback, nodeEventListenerParam.options)
   }
 
   /**
@@ -110,7 +108,7 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
     if (this.eventListeners().size) {
       this.eventListeners().forEach((value, key, map) => {
         value.forEach((v, k, m) => {
-          this._elementRemoveListener(v.type, v.listener, v.options)
+          this._elementRemoveListener(v)
         })
       })
     }
@@ -118,45 +116,42 @@ class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    *
-   * @param {string} type
-   * @param {string} key
+   * @param {string} event
+   * @param {string} toekn
    * @private
    */
-  _removeEventListenerByKey(type, key) {
-    if (this.eventListeners().has(type)) {
-      this.eventListeners().get(type).delete(key)
+  _removeEventListenerByKey(event, toekn) {
+    if (this.eventListeners().has(event)) {
+      this.eventListeners().get(event).delete(toekn)
     }
   }
 
-  /**
-   *
-   * @param {string} type
-   * @param {function} listener
-   * @param {Object} options
-   * @return {{type: string, listener: function, useCapture: boolean}}
-   * @private
-   */
-  _formatListenerShallow(type, listener, options) {
-    return deepFreezeSeal({
-      type: type,
-      listener: listener,
-      options: options
-    })
-  }
+  // /**
+  //  *
+  //  * @param {string} type
+  //  * @param {function} listener
+  //  * @param {Object} options
+  //  * @return {{type: string, listener: function, useCapture: boolean}}
+  //  * @private
+  //  */
+  // _formatListenerShallow(type, listener, options) {
+  //   return deepFreezeSeal({
+  //     type: type,
+  //     listener: listener,
+  //     options: options
+  //   })
+  // }
 
   /**
    *
-   * @param {string} type
-   * @param {string} key
+   * @param {string} event
+   * @param {string} token
    * @return {boolean}
    * @private
    */
-  _hasEventKey(type, key) {
-    return this.eventListeners().has(type) && this.eventListeners().get(type).has(key)
+  _hasEventKey(event, token) {
+    return this.eventListeners().has(event) && this.eventListeners().get(event).has(token)
   }
 }
 
 export const select = ListenerAttributeHandler.select
-export {
-  ListenerAttributeHandler
-}

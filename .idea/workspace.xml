@@ -19,8 +19,8 @@
       <file leaf-file-name="ListenerReconciliation.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ListenerReconciliation.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="734">
-              <caret line="89" column="3" lean-forward="true" selection-start-line="89" selection-start-column="3" selection-end-line="89" selection-end-column="3" />
+            <state relative-caret-position="1274">
+              <caret line="109" column="3" lean-forward="true" selection-start-line="109" selection-start-column="3" selection-end-line="109" selection-end-column="3" />
             </state>
           </provider>
         </entry>
@@ -196,24 +196,24 @@
       <workItem from="1532591882842" duration="3603000" />
       <workItem from="1532601771573" duration="5133000" />
       <workItem from="1532669476795" duration="6645000" />
-      <workItem from="1533136748101" duration="911000" />
+      <workItem from="1533136748101" duration="992000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="58374000" />
+    <option name="totallyTimeSpent" value="58455000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1910" height="2160" extended-state="4" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" x="695" y="420" width="476" height="275" id="Project" order="1" visible="true" weight="0.20418848" />
+      <window_info active="true" content_ui="combo" x="695" y="420" width="476" height="275" id="Project" order="1" visible="true" weight="0.20418848" />
       <window_info anchor="bottom" id="TODO" order="10" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="3" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="1" visible="true" weight="0.13693346" />
+      <window_info anchor="bottom" id="Terminal" order="1" visible="true" weight="0.13693346" />
       <window_info id="Favorites" order="0" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
@@ -556,8 +556,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ListenerReconciliation.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="734">
-          <caret line="89" column="3" lean-forward="true" selection-start-line="89" selection-start-column="3" selection-end-line="89" selection-end-column="3" />
+        <state relative-caret-position="1274">
+          <caret line="109" column="3" lean-forward="true" selection-start-line="109" selection-start-column="3" selection-end-line="109" selection-end-column="3" />
         </state>
       </provider>
     </entry>

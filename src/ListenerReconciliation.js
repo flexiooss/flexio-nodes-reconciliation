@@ -107,7 +107,6 @@ class ListenerReconciliation {
         this._addEventListener(listener)
       }
     })
-    console.log(currentListenersMap)
   }
 
   /**

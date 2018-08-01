@@ -74,13 +74,10 @@ class ListenerReconciliation {
    * @private
    */
   _traverseTypes() {
-    console.log('bouh')
     this.$candidate.eventListeners().forEach((listener, token, map) => {
       if (!this.$current.eventListeners().has(token)) {
-        console.log('ici')
         this._addAllListeners(token)
       } else {
-        console.log('la')
         this._updateCurrent(token)
       }
     })

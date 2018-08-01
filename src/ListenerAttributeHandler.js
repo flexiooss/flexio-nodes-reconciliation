@@ -72,7 +72,6 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
     this.eventListeners().get(nodeEventListenerParam.event).set(
       token,
       nodeEventListenerParam
-      // this._formatListenerShallow(type, listener, options)
     )
     return token
   }
@@ -87,7 +86,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
   off(event, token) {
     if (this._hasEventKey(event, token)) {
       const nodeEventListenerParam = this.eventListeners().get(event).get(token)
-      this._elementRemoveListener(nodeEventListenerParam.event, nodeEventListenerParam.callback, nodeEventListenerParam.options)
+      this._elementRemoveListener(nodeEventListenerParam)
       this._removeEventListenerByKey(event, token)
     }
   }
@@ -117,12 +116,12 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
   /**
    *
    * @param {string} event
-   * @param {string} toekn
+   * @param {string} token
    * @private
    */
-  _removeEventListenerByKey(event, toekn) {
+  _removeEventListenerByKey(event, token) {
     if (this.eventListeners().has(event)) {
-      this.eventListeners().get(event).delete(toekn)
+      this.eventListeners().get(event).delete(token)
     }
   }
 

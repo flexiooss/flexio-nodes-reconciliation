@@ -94,7 +94,7 @@ class ReconciliationAttributeHandler extends AttributeHandler {
   }
 
   /**
-   * @param {array<strring>} rules
+   * @param {array<string>} rules
    */
   addReconcileRules(rules) {
     assert(Array.isArray(rules),
@@ -112,7 +112,7 @@ class ReconciliationAttributeHandler extends AttributeHandler {
    * @param {string} rule
    */
   __addReconcileRule(rule) {
-    if (this.__isAllowedRule(rule) && !this.hasReconciliationRule()) {
+    if (this.__isAllowedRule(rule) && !this.hasReconciliationRule(rule)) {
       this.reconcileRules().push(rule)
     }
   }

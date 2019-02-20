@@ -9,62 +9,68 @@ const MAX_SLIBINGS_NODES_UPDATE_BY_ID = 50
 
 /**
  *
- * @param {Node} current
- * @param {Node} candidate
- * @param {Node} parentCurrent parent of current element
+ * @param {Element} current
+ * @param {Element} candidate
+ * @param {Element} parentCurrent Parent of current element
  */
 
-class Reconciliation {
+export class Reconciliation {
   /**
    *
-   * @param {Node} current
-   * @param {Node} candidate
-   * @param {Node} parentCurrent
+   * @param {Element} current
+   * @param {Element} candidate
+   * @param {Element} parentCurrent
    */
   constructor(current, candidate, parentCurrent = null) {
+    console.log('Reconciliation')
     assert(isNode(current) && isNode(candidate),
       'Reconciliation: `current : %s` and  `candidate : %s` arguments assert be Node',
       typeof current, typeof candidate)
+
+    console.log(current)
+    console.dir(current)
+    console.log(candidate)
+    console.dir(candidate)
     /**
      *
-     * @type {Node}
+     * @type {Element}
      */
     this.current = current
     /**
      *
-     * @type {Node | null}
+     * @type {Element | null}
      */
     this.parentCurrent = parentCurrent
     /**
      *
-     * @type {Node}
+     * @type {Element}
      */
     this.candidate = candidate
     /**
      *
      * @type {ListenerAttributeHandler}
      */
-    this.$current = select(current)
+    this.$current = this.castAttributes(current)
     /**
      *
      * @type {ListenerAttributeHandler}
      */
-    this.$candidate = select(candidate)
+    this.$candidate = this.castAttributes(candidate)
     /**
      *
-     * @type {null | boolean}
+     * @type {(null | boolean)}
      * @private
      */
     this._equalNode = null
     /**
      *
-     * @type {null | boolean}
+     * @type {(null|boolean)}
      * @private
      */
     this._equalListeners = null
     /**
      *
-     * @type {null | boolean}
+     * @type {(null | boolean)}
      * @private
      */
     this._equalWithoutChildren = null
@@ -74,21 +80,75 @@ class Reconciliation {
      * @private
      */
     this._isCurrentReplaced = false
+
+    /**
+     * @type {boolean}
+     * @protected
+     */
+    this._rootReconciliation = false
+  }
+
+  /**
+   *
+   * @param {boolean} rootReconciliation
+   * @return {Reconciliation}
+   */
+  withRootReconciliation(rootReconciliation) {
+    this._rootReconciliation = rootReconciliation
+    return this
+  }
+
+  /**
+   *
+   * @return {boolean}
+   */
+  isRootElementReconcile() {
+    return this._rootReconciliation === true
+  }
+
+  /**
+   *
+   * @param {Element} element
+   * @return {AttributeHandler}
+   */
+  castAttributes(element) {
+    return select(element)
   }
 
   /**
    * @static
-   * @param {Node} current
-   * @param {Node} candidate
-   * @param {Node} parentCurrent parent of current element
+   * @param {Element} current
+   * @param {Element} candidate
+   * @param {Element} parentCurrent Parent of current element
    */
   static reconciliation(current, candidate, parentCurrent) {
     new Reconciliation(current, candidate, parentCurrent).reconcile()
   }
 
   /**
+   * @static
+   * @param {Element} current
+   * @param {Element} candidate
+   * @param {Element} parentCurrent Parent of current element
+   */
+  static startReconciliation(current, candidate, parentCurrent) {
+    new Reconciliation(current, candidate, parentCurrent)
+      .withRootReconciliation(true)
+      .reconcile()
+  }
+
+  /**
+   * @param {Element} current
+   * @param {Element} candidate
+   * @param {Element} parentCurrent Parent of current element
+   */
+  reconciliation(current, candidate, parentCurrent) {
+    new this.constructor(current, candidate, parentCurrent).reconcile()
+  }
+
+  /**
    *
-   * @return {boolean | void}
+   * @return {(boolean | void)}
    */
   reconcile() {
     if (this.__hasByPathRule() || (this.__isEqualNode() && this.__isEqualListeners())) {
@@ -141,7 +201,7 @@ class Reconciliation {
       let nextCandidate = candidate.nextSibling
       let current = this.__currentById(i, candidate)
       if (current) {
-        Reconciliation.reconciliation(current, candidate, this.current)
+        this.reconciliation(current, candidate, this.current)
       } else {
         this.current.appendChild(candidate)
       }
@@ -158,7 +218,7 @@ class Reconciliation {
   /**
    * @private
    * @param {Number} keyChildNode
-   * @param {Node} candidate
+   * @param {Element} candidate
    * @description search and replace current element if a slibing node has the same id as the candidate
    */
   __currentById(keyChildNode, candidate) {
@@ -181,7 +241,7 @@ class Reconciliation {
 
   /**
    * @private
-   * @param {Node} parentNode
+   * @param {Element} parentNode
    * @param {String} id
    */
   __findNodeByIdInChildNodes(parentNode, id, start) {
@@ -237,6 +297,8 @@ class Reconciliation {
    * @private
    */
   __hasByPathRule() {
+    console.log('__hasByPathRule')
+    console.log(this.$candidate.hasReconciliationRule(R.BYPATH))
     return this.$candidate.hasReconciliationRule(R.BYPATH)
   }
 
@@ -270,7 +332,7 @@ class Reconciliation {
   /**
    *
    * @return {boolean} false
-   * @private
+   * @protected
    */
   _abort() {
     return false
@@ -278,3 +340,4 @@ class Reconciliation {
 }
 
 export const reconcile = Reconciliation.reconciliation
+export const startReconcile = Reconciliation.startReconciliation

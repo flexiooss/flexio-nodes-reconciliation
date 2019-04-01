@@ -1,27 +1,27 @@
-import {assert, deepFreezeSeal, isFunction, isObject, mergeWithoutPrototype} from 'flexio-jshelpers'
+import {assertType, deepFreezeSeal, isFunction, isObject, mergeWithoutPrototype} from 'flexio-jshelpers'
 
 export class EventListenerParam {
   /**
    *
    * @param {String} event
    * @param {function(payload<Object>, type<string>)} callback
-   * @param {{capture: boolean, once: boolean, passive: boolean} | null} options
+   * @param {?{capture: boolean, once: boolean, passive: boolean}} options
    * @throws AssertionError
    */
   constructor(event, callback, options = {}) {
-    assert(!!event,
+    assertType(!!event,
       'hotballoon:EventListenerParam:constructor: ̀`event` property assert be not empty'
     )
-    assert(isFunction(callback),
+    assertType(isFunction(callback),
       'hotballoon:EventListenerParam:constructor: ̀`callback` property assert be Callable'
     )
-    assert(isObject(options),
+    assertType(isObject(options),
       'hotballoon:EventListenerParam:constructor: ̀`options` property assert be an Object or null'
     )
     this.event = event
     this.callback = callback
     /**
-     * @type {capture: boolean, once: boolean, passive: boolean}
+     * @params {capture: boolean, once: boolean, passive: boolean}
      */
     this.options = mergeWithoutPrototype({
       capture: false,

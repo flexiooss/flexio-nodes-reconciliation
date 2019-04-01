@@ -16,14 +16,14 @@ export class AbstractReconcileNode extends ReconcileNodeInterface {
 
     /**
      *
-     * @type {ListenerAttributeHandler}
+     * @params {ListenerAttributeHandler}
      * @protected
      */
     this._$current = $current
 
     /**
      *
-     * @type {ListenerAttributeHandler}
+     * @params {ListenerAttributeHandler}
      * @protected
      */
     this._$candidate = $candidate

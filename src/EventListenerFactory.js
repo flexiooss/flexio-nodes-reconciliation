@@ -8,32 +8,32 @@ export class EventListenerFactory {
   constructor(event = '') {
     /**
      *
-     * @type {string}
+     * @params {string}
      * @protected
      */
     this._event = event
     /**
      *
-     * @type {Function}
+     * @params {Function}
      * @callback
      * @protected
      */
     this._callback = () => true
     /**
      *
-     * @type {boolean}
+     * @params {boolean}
      * @protected
      */
     this._capture = false
     /**
      *
-     * @type {boolean}
+     * @params {boolean}
      * @protected
      */
     this._once = false
     /**
      *
-     * @type {boolean}
+     * @params {boolean}
      * @protected
      */
     this._passive = false

@@ -2,8 +2,8 @@
 import {isNode, assert} from 'flexio-jshelpers'
 
 /**
- * @param {NodeElement} current
- * @param {NodeElement} candidate
+ * @param {ElementDescription} current
+ * @param {ElementDescription} candidate
  */
 class ListenerReconciliation {
   /**
@@ -25,8 +25,8 @@ class ListenerReconciliation {
 
   /**
    * @static
-   * @param {NodeElement} current
-   * @param {NodeElement} candidate
+   * @param {ElementDescription} current
+   * @param {ElementDescription} candidate
    */
   static listenerReconciliation(current, $current, candidate, $candidate) {
     new ListenerReconciliation(current, $current, candidate, $candidate).reconcile()
@@ -91,7 +91,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : type of event
+   * @param {String} event : params of event
    */
   _updateCurrent(event) {
     const currentListenersMap = this.$current.eventListeners().get(event)
@@ -111,7 +111,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : type of event
+   * @param {String} event : params of event
    */
   _removeAllListeners(event) {
     this.$current.eventListeners().get(event)
@@ -122,7 +122,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : type of event
+   * @param {String} event : params of event
    */
   _addAllListeners(event) {
     this.$candidate.eventListeners().get(event)
@@ -133,7 +133,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : type of event
+   * @param {String} event : params of event
    * @param {String} token of Listener Map entry
    */
   _removeEventListener(event, token) {
@@ -142,7 +142,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {EventListenerParam} listener : type of event
+   * @param {EventListenerParam} listener : params of event
    */
   _addEventListener(listener) {
     this.$current.on(listener)

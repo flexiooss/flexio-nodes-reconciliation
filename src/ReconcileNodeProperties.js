@@ -17,14 +17,14 @@ export class ReconcileNodeProperties extends AbstractReconcileNode {
 
     /**
      *
-     * @type {Array<string>}
+     * @params {Array<string>}
      * @private
      */
     this.__currentReconcileProperties = null
 
     /**
      *
-     * @type {Array<string>}
+     * @params {Array<string>}
      * @private
      */
     this.__candidateReconcileProperties = null

@@ -22,67 +22,62 @@ export class Reconciliation {
    * @param {Element} parentCurrent
    */
   constructor(current, candidate, parentCurrent = null) {
-    console.log('Reconciliation')
     assert(isNode(current) && isNode(candidate),
       'Reconciliation: `current : %s` and  `candidate : %s` arguments assert be Node',
       typeof current, typeof candidate)
 
-    console.log(current)
-    console.dir(current)
-    console.log(candidate)
-    console.dir(candidate)
     /**
      *
-     * @type {Element}
+     * @params {Element}
      */
     this.current = current
     /**
      *
-     * @type {Element | null}
+     * @params {Element | null}
      */
     this.parentCurrent = parentCurrent
     /**
      *
-     * @type {Element}
+     * @params {Element}
      */
     this.candidate = candidate
     /**
      *
-     * @type {ListenerAttributeHandler}
+     * @params {ListenerAttributeHandler}
      */
     this.$current = this.castAttributes(current)
     /**
      *
-     * @type {ListenerAttributeHandler}
+     * @params {ListenerAttributeHandler}
      */
     this.$candidate = this.castAttributes(candidate)
     /**
      *
-     * @type {(null | boolean)}
+     * @params {(null|boolean)}
      * @private
      */
     this._equalNode = null
     /**
      *
-     * @type {(null|boolean)}
+     * @params {(null|boolean)}
      * @private
      */
     this._equalListeners = null
     /**
      *
-     * @type {(null | boolean)}
+     * @params {(null | boolean)}
      * @private
      */
     this._equalWithoutChildren = null
     /**
      *
-     * @type {boolean}
+     * @params {boolean}
      * @private
      */
     this._isCurrentReplaced = false
 
     /**
-     * @type {boolean}
+     * @params {boolean}
      * @protected
      */
     this._rootReconciliation = false
@@ -297,8 +292,6 @@ export class Reconciliation {
    * @private
    */
   __hasByPathRule() {
-    console.log('__hasByPathRule')
-    console.log(this.$candidate.hasReconciliationRule(R.BYPATH))
     return this.$candidate.hasReconciliationRule(R.BYPATH)
   }
 

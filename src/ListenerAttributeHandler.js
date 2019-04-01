@@ -17,7 +17,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    *
-   * @return {Map<string, Map<string, {type: string, listener: function, useCapture: boolean}>>}
+   * @return {Map<string, Map<string, {params: string, listener: function, useCapture: boolean}>>}
    */
   eventListeners() {
     if (!(KEY_EVENT_WRAPPER in this.privateAttribute)) {
@@ -28,7 +28,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    *
-   * @return {Map<string, Map<string, {type: string, listener: function, useCapture: boolean}>>}
+   * @return {Map<string, Map<string, {params: string, listener: function, useCapture: boolean}>>}
    * @private
    */
   _initEventListener() {
@@ -37,7 +37,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    *
-   * @return {Map<string, {type: string, listener: function, useCapture: boolean}>}
+   * @return {Map<string, {params: string, listener: function, useCapture: boolean}>}
    * @private
    */
   _initEventListenerType() {
@@ -45,7 +45,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
   }
 
   /**
-   * @description add to shallow copy type listened for cloning the elementement easier
+   * @description add to shallow copy params listened for cloning the elementement easier
    * @param {EventListenerParam} nodeEventListenerParam of event
    * @return {string}
    */
@@ -78,7 +78,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    * @function off
-   * @description remove from shallow copy type listened
+   * @description remove from shallow copy params listened
    * @param {String} event of event
    * @param {String} token of listener
    */
@@ -127,15 +127,15 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   // /**
   //  *
-  //  * @param {string} type
+  //  * @param {string} params
   //  * @param {function} listener
   //  * @param {Object} options
-  //  * @return {{type: string, listener: function, useCapture: boolean}}
+  //  * @return {{params: string, listener: function, useCapture: boolean}}
   //  * @private
   //  */
-  // _formatListenerShallow(type, listener, options) {
+  // _formatListenerShallow(params, listener, options) {
   //   return deepFreezeSeal({
-  //     type: type,
+  //     params: params,
   //     listener: listener,
   //     options: options
   //   })

@@ -20,22 +20,22 @@ class NodeReconciliation {
       'NodeReconciliation: `current` and  `candidate` arguments assert be Node')
     /**
      *
-     * @type {Node}
+     * @params {Node}
      */
     this.current = current
     /**
      *
-     * @type {ListenerAttributeHandler}
+     * @params {ListenerAttributeHandler}
      */
     this.$current = $current
     /**
      *
-     * @type {Node}
+     * @params {Node}
      */
     this.candidate = candidate
     /**
      *
-     * @type {ListenerAttributeHandler}
+     * @params {ListenerAttributeHandler}
      */
     this.$candidate = $candidate
   }

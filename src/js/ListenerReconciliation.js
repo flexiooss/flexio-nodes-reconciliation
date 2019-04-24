@@ -91,7 +91,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : params of event
+   * @param {String} event : params of events
    */
   _updateCurrent(event) {
     const currentListenersMap = this.$current.eventListeners().get(event)
@@ -111,7 +111,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : params of event
+   * @param {String} event : params of events
    */
   _removeAllListeners(event) {
     this.$current.eventListeners().get(event)
@@ -122,7 +122,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : params of event
+   * @param {String} event : params of events
    */
   _addAllListeners(event) {
     this.$candidate.eventListeners().get(event)
@@ -133,7 +133,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : params of event
+   * @param {String} event : params of events
    * @param {String} token of Listener Map entry
    */
   _removeEventListener(event, token) {
@@ -142,7 +142,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {EventListenerParam} listener : params of event
+   * @param {EventListenerParam} listener : params of events
    */
   _addEventListener(listener) {
     this.$current.on(listener)

@@ -292,7 +292,7 @@ export class Reconciliation {
    * @private
    */
   __hasByPathRule() {
-    return this.$candidate.hasReconciliationRule(R.BYPATH)
+    return this.$candidate.hasReconciliationRule(R.BYPASS)
   }
 
   /**
@@ -301,7 +301,7 @@ export class Reconciliation {
    * @private
    */
   __hasExcludeChildrenRule() {
-    return this.$candidate.hasReconciliationRule(R.BYPATH_CHILDREN)
+    return this.$candidate.hasReconciliationRule(R.BYPASS_CHILDREN)
   }
 
   /**
@@ -310,7 +310,7 @@ export class Reconciliation {
    * @private
    */
   __hasExcludeListenersRule() {
-    return this.$candidate.hasReconciliationRule(R.BYPATH_LISTENERS)
+    return this.$candidate.hasReconciliationRule(R.BYPASS_LISTENERS)
   }
 
   /**

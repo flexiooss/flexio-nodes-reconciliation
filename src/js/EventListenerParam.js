@@ -10,7 +10,7 @@ export class EventListenerParam {
    */
   constructor(event, callback, options = {}) {
     assertType(!!event,
-      'hotballoon:EventListenerParam:constructor: ̀`event` property assert be not empty'
+      'hotballoon:EventListenerParam:constructor: ̀`events` property assert be not empty'
     )
     assertType(isFunction(callback),
       'hotballoon:EventListenerParam:constructor: ̀`callback` property assert be Callable'
@@ -18,7 +18,7 @@ export class EventListenerParam {
     assertType(isObject(options),
       'hotballoon:EventListenerParam:constructor: ̀`options` property assert be an Object or null'
     )
-    this.event = event
+    this.events = event
     this.callback = callback
     /**
      * @params {capture: boolean, once: boolean, passive: boolean}

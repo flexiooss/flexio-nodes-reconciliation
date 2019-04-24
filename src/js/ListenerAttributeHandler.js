@@ -46,12 +46,12 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    * @description add to shallow copy params listened for cloning the elementement easier
-   * @param {EventListenerParam} nodeEventListenerParam of event
+   * @param {EventListenerParam} nodeEventListenerParam of events
    * @return {string}
    */
   on(nodeEventListenerParam) {
     this.element.addEventListener(
-      nodeEventListenerParam.event,
+      nodeEventListenerParam.events,
       nodeEventListenerParam.callback,
       nodeEventListenerParam.options
     )
@@ -65,11 +65,11 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
    * @private
    */
   _addEventListener(nodeEventListenerParam) {
-    if (!(this.eventListeners().has(nodeEventListenerParam.event))) {
-      this.eventListeners().set(nodeEventListenerParam.event, this._initEventListenerType())
+    if (!(this.eventListeners().has(nodeEventListenerParam.events))) {
+      this.eventListeners().set(nodeEventListenerParam.events, this._initEventListenerType())
     }
     const token = getNextSequence()
-    this.eventListeners().get(nodeEventListenerParam.event).set(
+    this.eventListeners().get(nodeEventListenerParam.events).set(
       token,
       nodeEventListenerParam
     )
@@ -79,7 +79,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
   /**
    * @function off
    * @description remove from shallow copy params listened
-   * @param {String} event of event
+   * @param {String} event of events
    * @param {String} token of listener
    */
 
@@ -97,7 +97,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
    * @private
    */
   _elementRemoveListener(nodeEventListenerParam) {
-    this.element.removeEventListener(nodeEventListenerParam.event, nodeEventListenerParam.callback, nodeEventListenerParam.options)
+    this.element.removeEventListener(nodeEventListenerParam.events, nodeEventListenerParam.callback, nodeEventListenerParam.options)
   }
 
   /**

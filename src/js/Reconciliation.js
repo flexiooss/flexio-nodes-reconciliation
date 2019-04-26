@@ -146,19 +146,19 @@ export class Reconciliation {
    * @return {(boolean | void)}
    */
   reconcile() {
-    if (this.__hasByPathRule() || (this.__isEqualNode() && this.__isEqualListeners())) {
+    if (!this._hasForceRule() && (this._hasByPassRule() || (this.__isEqualNode() && this.__isEqualListeners()))) {
       return this._abort()
     }
     if (!this.__isEqualNode()) {
-      if (!this.__isEqualWithoutChildren() || this.__hasReplaceRule()) {
+      if (!this.__isEqualWithoutChildren() || this._hasReplaceRule()) {
         this.__updateCurrent()
       }
-      if (!this._isCurrentReplaced && !this.__hasExcludeChildrenRule()) {
+      if (!this._hasForceRule() && !this._isCurrentReplaced && !this._hasExcludeChildrenRule()) {
         this.__reconcileChildNodes()
       }
     }
 
-    if (!this.__hasExcludeListenersRule() && !this._isCurrentReplaced && !this.__isEqualListeners()) {
+    if (!this._hasExcludeListenersRule() && !this._isCurrentReplaced && !this.__isEqualListeners()) {
       listenerReconcile(this.current, this.$current, this.candidate, this.$candidate)
     }
   }
@@ -289,37 +289,46 @@ export class Reconciliation {
   /**
    *
    * @return {boolean}
-   * @private
+   * @protected
    */
-  __hasByPathRule() {
+  _hasByPassRule() {
     return this.$candidate.hasReconciliationRule(R.BYPASS)
   }
 
   /**
    *
    * @return {boolean}
-   * @private
+   * @protected
    */
-  __hasExcludeChildrenRule() {
+  _hasExcludeChildrenRule() {
     return this.$candidate.hasReconciliationRule(R.BYPASS_CHILDREN)
   }
 
   /**
    *
    * @return {boolean}
-   * @private
+   * @protected
    */
-  __hasExcludeListenersRule() {
+  _hasExcludeListenersRule() {
     return this.$candidate.hasReconciliationRule(R.BYPASS_LISTENERS)
   }
 
   /**
    *
    * @return {boolean}
-   * @private
+   * @protected
    */
-  __hasReplaceRule() {
+  _hasReplaceRule() {
     return this.$candidate.hasReconciliationRule(R.REPLACE)
+  }
+
+  /**
+   *
+   * @return {boolean}
+   * @protected
+   */
+  _hasForceRule() {
+    return this.$candidate.hasReconciliationRule(R.FORCE)
   }
 
   /**

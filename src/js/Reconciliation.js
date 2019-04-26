@@ -1,9 +1,9 @@
 'use strict'
-import {isNode, assert, removeChildNodes} from 'flexio-jshelpers'
-import {select} from './ListenerAttributeHandler'
-import {nodeReconcile} from './NodeReconciliation'
-import {assertUpdateCurrent, listenerReconcile} from './ListenerReconciliation'
-import {RECONCILIATION_RULES as R} from './rules'
+import { isNode, assert, removeChildNodes } from 'flexio-jshelpers'
+import { select } from './ListenerAttributeHandler'
+import { nodeReconcile } from './NodeReconciliation'
+import { assertUpdateCurrent, listenerReconcile } from './ListenerReconciliation'
+import { RECONCILIATION_RULES as R } from './rules'
 
 const MAX_SLIBINGS_NODES_UPDATE_BY_ID = 50
 
@@ -36,6 +36,11 @@ export class Reconciliation {
      * @params {Element | null}
      */
     this.parentCurrent = parentCurrent
+    /**
+     *
+     * @params {ListenerAttributeHandler}
+     */
+    this.$parentCurrent = this.castAttributes(parentCurrent)
     /**
      *
      * @params {Element}
@@ -138,7 +143,7 @@ export class Reconciliation {
    * @param {Element} parentCurrent Parent of current element
    */
   reconciliation(current, candidate, parentCurrent) {
-    new this.constructor(current, candidate, parentCurrent).reconcile()
+    new Reconciliation(current, candidate, parentCurrent).reconcile()
   }
 
   /**
@@ -146,14 +151,16 @@ export class Reconciliation {
    * @return {(boolean | void)}
    */
   reconcile() {
-    if (!this._hasForceRule() && (this._hasByPassRule() || (this.__isEqualNode() && this.__isEqualListeners()))) {
+    if (this._hasByPassRule() || (this.__isEqualNode() && this.__isEqualListeners())) {
       return this._abort()
     }
+
     if (!this.__isEqualNode()) {
       if (!this.__isEqualWithoutChildren() || this._hasReplaceRule()) {
         this.__updateCurrent()
       }
-      if (!this._hasForceRule() && !this._isCurrentReplaced && !this._hasExcludeChildrenRule()) {
+
+      if ((!this._isCurrentReplaced && !this._hasExcludeChildrenRule())) {
         this.__reconcileChildNodes()
       }
     }
@@ -195,11 +202,13 @@ export class Reconciliation {
     do {
       let nextCandidate = candidate.nextSibling
       let current = this.__currentById(i, candidate)
+
       if (current) {
         this.reconciliation(current, candidate, this.current)
       } else {
         this.current.appendChild(candidate)
       }
+
       candidate = nextCandidate
       nextCandidate = null
       i++

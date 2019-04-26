@@ -1,5 +1,5 @@
-import {AttributeHandler} from 'flexio-hyperflex'
-import {assert} from 'flexio-jshelpers'
+import { AttributeHandler } from 'flexio-hyperflex'
+import { assert } from 'flexio-jshelpers'
 import {
   KEY_RECONCILIATE_RULES,
   KEY_RECONCILIATE_PROPERTIES

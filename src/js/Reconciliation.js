@@ -1,5 +1,5 @@
-'use strict'
-import { isNode, assert, removeChildNodes } from 'flexio-jshelpers'
+import { isNode, assert } from '@flexio-oss/assert'
+import { removeChildNodes } from '@flexio-oss/js-type-helpers'
 import { select } from './ListenerAttributeHandler'
 import { nodeReconcile } from './NodeReconciliation'
 import { assertUpdateCurrent, listenerReconcile } from './ListenerReconciliation'

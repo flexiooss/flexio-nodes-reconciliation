@@ -7,7 +7,10 @@
   "author": "Thomas Chatelain (https://github.com/TomAchT)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@flexio-oss/flexio-hyperflex": "0.0.0"
+    "@flexio-oss/flexio-hyperflex": "0.0.0",
+    "@flexio-oss/assert": "0.0.0",
+    "@flexio-oss/js-type-helpers": "0.0.0",
+    "@flexio-oss/js-helpers": "0.0.0"
   },
   "devDependencies": {
     "code-altimeter-js": "https://github.com/flexiooss/code-altimeter-js.git",

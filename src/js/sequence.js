@@ -1,4 +1,4 @@
-import {Sequence} from 'flexio-jshelpers'
+import {Sequence} from '@flexio-oss/js-helpers'
 
 const sequence = new Sequence()
 /**

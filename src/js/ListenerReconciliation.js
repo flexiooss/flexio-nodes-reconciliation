@@ -1,5 +1,4 @@
-'use strict'
-import {isNode, assert} from 'flexio-jshelpers'
+import {isNode, assert} from '@flexio-oss/assert'
 
 /**
  * @param {ElementDescription} current

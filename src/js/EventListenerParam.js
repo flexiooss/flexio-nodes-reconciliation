@@ -1,4 +1,5 @@
-import {assertType, deepFreezeSeal, isFunction, isObject, mergeWithoutPrototype} from 'flexio-jshelpers'
+import {assertType, isFunction, isObject} from '@flexio-oss/assert'
+import {deepFreezeSeal, mergeWithoutPrototype} from '@flexio-oss/js-type-helpers'
 
 export class EventListenerParam {
   /**

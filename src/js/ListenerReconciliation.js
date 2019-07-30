@@ -75,9 +75,6 @@ class ListenerReconciliation {
    */
   _traverseTypes() {
     this.$candidate.eventListeners().forEach((listener, event, map) => {
-      console.log(listener)
-      console.log(event)
-      console.log(this.$current.eventListeners())
 
       if (!this.$current.eventListeners().has(event)) {
         this._addAllListeners(event)

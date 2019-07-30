@@ -125,22 +125,6 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
     }
   }
 
-  // /**
-  //  *
-  //  * @param {string} params
-  //  * @param {function} listener
-  //  * @param {Object} options
-  //  * @return {{params: string, listener: function, useCapture: boolean}}
-  //  * @private
-  //  */
-  // _formatListenerShallow(params, listener, options) {
-  //   return deepFreezeSeal({
-  //     params: params,
-  //     listener: listener,
-  //     options: options
-  //   })
-  // }
-
   /**
    *
    * @param {string} event

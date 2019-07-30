@@ -55,4 +55,21 @@ export class EventListenerParam {
   static createWithOptions(event, callback, options) {
     return deepFreezeSeal(new this(event, callback, options))
   }
+
+  /**
+   * @param {EventListenerParam} current
+   * @param {EventListenerParam} compare
+   * @return {boolean}
+   */
+  static areLike(current, compare) {
+    if (current == compare) {
+      return true
+    }
+    return (current.callback.toString() === compare.callback.toString())
+      && (current.events === compare.events)
+      && (current.options.capture === compare.options.capture)
+      && (current.options.once === compare.options.once)
+      && (current.options.passive === compare.options.passive);
+
+  }
 }

@@ -102,8 +102,6 @@ class ListenerReconciliation {
     const candidateListenersMap = this.$candidate.eventListeners().get(event)
 
     currentListenersMap.forEach((currentListener, currentToken, set) => {
-      console.log(currentListener)
-      console.log(currentToken)
 
       let hasEvent = false
       candidateListenersMap.forEach((

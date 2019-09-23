@@ -1,6 +1,6 @@
-import {EventListenerParam} from './EventListenerParam'
+import {EventListenerConfig} from './EventListenerConfig'
 
-export class EventListenerFactory {
+export class EventListenerConfigBuilder {
   /**
    *
    * @param {String} event
@@ -42,7 +42,7 @@ export class EventListenerFactory {
   /**
    *
    * @param {String} event
-   * @return {EventListenerFactory}
+   * @return {EventListenerConfigBuilder}
    * @constructor
    */
   static listen(event) {
@@ -52,7 +52,7 @@ export class EventListenerFactory {
   /**
    *
    * @param {Function} clb
-   * @return {EventListenerFactory}
+   * @return {EventListenerConfigBuilder}
    */
   callback(clb) {
     this._callback = clb
@@ -62,7 +62,7 @@ export class EventListenerFactory {
   /**
    *
    * @param {boolean} [capture = true]
-   * @return {EventListenerFactory}
+   * @return {EventListenerConfigBuilder}
    */
   capture(capture = true) {
     this._capture = capture
@@ -72,7 +72,7 @@ export class EventListenerFactory {
   /**
    *
    * @param {boolean} [once = true]
-   * @return {EventListenerFactory}
+   * @return {EventListenerConfigBuilder}
    */
   once(once = true) {
     this._once = once
@@ -82,7 +82,7 @@ export class EventListenerFactory {
   /**
    *
    * @param {boolean} [passive = true]
-   * @return {EventListenerFactory}
+   * @return {EventListenerConfigBuilder}
    */
   passive(passive = true) {
     this._passive = passive
@@ -91,7 +91,7 @@ export class EventListenerFactory {
 
   /**
    *
-   * @return {EventListenerParam}
+   * @return {EventListenerConfig}
    */
   build() {
     if (this._hasOptions()) {
@@ -105,9 +105,9 @@ export class EventListenerFactory {
       if (this._passive) {
         options.passive = true
       }
-      return EventListenerParam.createWithOptions(this._event, this._callback, options)
+      return EventListenerConfig.createWithOptions(this._event, this._callback, options)
     } else {
-      return EventListenerParam.create(this._event, this._callback)
+      return EventListenerConfig.create(this._event, this._callback)
     }
   }
 

@@ -1,7 +1,7 @@
 import {assertType, isFunction, isObject} from '@flexio-oss/assert'
 import {deepFreezeSeal, mergeWithoutPrototype} from '@flexio-oss/js-type-helpers'
 
-export class EventListenerParam {
+export class EventListenerConfig {
   /**
    *
    * @param {String} event
@@ -11,13 +11,13 @@ export class EventListenerParam {
    */
   constructor(event, callback, options = {}) {
     assertType(!!event,
-      'hotballoon:EventListenerParam:constructor: ̀`events` property assert be not empty'
+      'EventListenerConfig:constructor: ̀`events` property assert be not empty'
     )
     assertType(isFunction(callback),
-      'hotballoon:EventListenerParam:constructor: ̀`callback` property assert be Callable'
+      'EventListenerConfig:constructor: ̀`callback` property assert be Callable'
     )
     assertType(isObject(options),
-      'hotballoon:EventListenerParam:constructor: ̀`options` property assert be an Object or null'
+      'EventListenerConfig:constructor: ̀`options` property assert be an Object or null'
     )
     this.events = event
     this.callback = callback
@@ -35,7 +35,7 @@ export class EventListenerParam {
    *
    * @param {String} event
    * @param {function(payload<Object>, type<string>)} callback
-   * @return {EventListenerParam}
+   * @return {EventListenerConfig}
    * @constructor
    * @readonly
    */
@@ -48,7 +48,7 @@ export class EventListenerParam {
    * @param {String} event
    * @param {function(payload<Object>, type<string>)} callback
    * @param {{capture: boolean, once: boolean, passive: boolean}} options
-   * @return {EventListenerParam}
+   * @return {EventListenerConfig}
    * @constructor
    * @readonly
    */
@@ -57,8 +57,8 @@ export class EventListenerParam {
   }
 
   /**
-   * @param {EventListenerParam} current
-   * @param {EventListenerParam} compare
+   * @param {EventListenerConfig} current
+   * @param {EventListenerConfig} compare
    * @return {boolean}
    */
   static areLike(current, compare) {

@@ -17,7 +17,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    *
-   * @return {Map<string, Map<string, {params: string, listener: function, useCapture: boolean}>>}
+   * @return {Map<string, Map<string, EventListenerConfig>>}
    */
   eventListeners() {
     if (!(KEY_EVENT_WRAPPER in this.privateAttribute)) {
@@ -28,7 +28,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    *
-   * @return {Map<string, Map<string, {params: string, listener: function, useCapture: boolean}>>}
+   * @return {Map<string, Map<string, EventListenerConfig>>}
    * @private
    */
   _initEventListener() {
@@ -37,7 +37,7 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   /**
    *
-   * @return {Map<string, {params: string, listener: function, useCapture: boolean}>}
+   * @return {Map<string, EventListenerConfig>}
    * @private
    */
   _initEventListenerType() {
@@ -45,33 +45,32 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
   }
 
   /**
-   * @description add to shallow copy params listened for cloning the elementement easier
-   * @param {EventListenerParam} nodeEventListenerParam of events
+   * @param {EventListenerConfig} nodeEventListenerConfig of events
    * @return {string}
    */
-  on(nodeEventListenerParam) {
+  on(nodeEventListenerConfig) {
     this.element.addEventListener(
-      nodeEventListenerParam.events,
-      nodeEventListenerParam.callback,
-      nodeEventListenerParam.options
+      nodeEventListenerConfig.events,
+      nodeEventListenerConfig.callback,
+      nodeEventListenerConfig.options
     )
-    return this._addEventListener(nodeEventListenerParam)
+    return this._addEventListener(nodeEventListenerConfig)
   }
 
   /**
    *
-   * @param {EventListenerParam} nodeEventListenerParam
+   * @param {EventListenerConfig} nodeEventListenerConfig
    * @return {string}
    * @private
    */
-  _addEventListener(nodeEventListenerParam) {
-    if (!(this.eventListeners().has(nodeEventListenerParam.events))) {
-      this.eventListeners().set(nodeEventListenerParam.events, this._initEventListenerType())
+  _addEventListener(nodeEventListenerConfig) {
+    if (!(this.eventListeners().has(nodeEventListenerConfig.events))) {
+      this.eventListeners().set(nodeEventListenerConfig.events, this._initEventListenerType())
     }
     const token = getNextSequence()
-    this.eventListeners().get(nodeEventListenerParam.events).set(
+    this.eventListeners().get(nodeEventListenerConfig.events).set(
       token,
-      nodeEventListenerParam
+      nodeEventListenerConfig
     )
     return token
   }
@@ -85,19 +84,19 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
 
   off(event, token) {
     if (this._hasEventKey(event, token)) {
-      const nodeEventListenerParam = this.eventListeners().get(event).get(token)
-      this._elementRemoveListener(nodeEventListenerParam)
+      const nodeEventListenerConfig = this.eventListeners().get(event).get(token)
+      this._elementRemoveListener(nodeEventListenerConfig)
       this._removeEventListenerByKey(event, token)
     }
   }
 
   /**
    *
-   * @param {EventListenerParam} nodeEventListenerParam
+   * @param {EventListenerConfig} nodeEventListenerConfig
    * @private
    */
-  _elementRemoveListener(nodeEventListenerParam) {
-    this.element.removeEventListener(nodeEventListenerParam.events, nodeEventListenerParam.callback, nodeEventListenerParam.options)
+  _elementRemoveListener(nodeEventListenerConfig) {
+    this.element.removeEventListener(nodeEventListenerConfig.events, nodeEventListenerConfig.callback, nodeEventListenerConfig.options)
   }
 
   /**
@@ -124,22 +123,6 @@ export class ListenerAttributeHandler extends ReconciliationAttributeHandler {
       this.eventListeners().get(event).delete(token)
     }
   }
-
-  // /**
-  //  *
-  //  * @param {string} params
-  //  * @param {function} listener
-  //  * @param {Object} options
-  //  * @return {{params: string, listener: function, useCapture: boolean}}
-  //  * @private
-  //  */
-  // _formatListenerShallow(params, listener, options) {
-  //   return deepFreezeSeal({
-  //     params: params,
-  //     listener: listener,
-  //     options: options
-  //   })
-  // }
 
   /**
    *

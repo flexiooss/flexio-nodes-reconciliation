@@ -1,5 +1,5 @@
-'use strict'
-import {isNode, assert} from 'flexio-jshelpers'
+import {isNode, assert} from '@flexio-oss/assert'
+import {EventListenerConfig} from './EventListenerConfig'
 
 /**
  * @param {ElementDescription} current
@@ -25,8 +25,10 @@ class ListenerReconciliation {
 
   /**
    * @static
-   * @param {ElementDescription} current
-   * @param {ElementDescription} candidate
+   * @param {Node} current
+   * @param {ListenerAttributeHandler} $current
+   * @param {Node} candidate
+   * @param {ListenerAttributeHandler} $candidate
    */
   static listenerReconciliation(current, $current, candidate, $candidate) {
     new ListenerReconciliation(current, $current, candidate, $candidate).reconcile()
@@ -34,8 +36,8 @@ class ListenerReconciliation {
 
   /**
    * @static
-   * @param {Map<string, Map<string, EventListenerParam>>} currentEventsListeners
-   * @param {Map<string, Map<string, EventListenerParam>>} candidateEventsListeners
+   * @param {Map<string, Map<string, EventListenerConfig>>} currentEventsListeners
+   * @param {Map<string, Map<string, EventListenerConfig>>} candidateEventsListeners
    */
   static assertUpdateCurrent(currentEventsListeners, candidateEventsListeners) {
     var ret = true
@@ -74,44 +76,91 @@ class ListenerReconciliation {
    * @private
    */
   _traverseTypes() {
-    this.$candidate.eventListeners().forEach((listener, token, map) => {
-      if (!this.$current.eventListeners().has(token)) {
-        this._addAllListeners(token)
+    this.$candidate.eventListeners().forEach((listener, event, map) => {
+
+      if (!this.$current.eventListeners().has(event)) {
+        this._addAllListeners(event)
       } else {
-        this._updateCurrent(token)
+        this._updateCurrent(event)
       }
     })
 
-    this.$current.eventListeners().forEach((listener, token, map) => {
-      if (!this.$candidate.eventListeners().has(token)) {
-        this._removeAllListeners(token)
+    this.$current.eventListeners().forEach((listener, event, map) => {
+      if (!this.$candidate.eventListeners().has(event)) {
+        this._removeAllListeners(event)
       }
     })
   }
 
   /**
    * @private
-   * @param {String} event : params of events
+   * @param {String} event - params of events
    */
   _updateCurrent(event) {
+
     const currentListenersMap = this.$current.eventListeners().get(event)
+
     const candidateListenersMap = this.$candidate.eventListeners().get(event)
 
-    currentListenersMap.forEach((listener, token, set) => {
-      if (!candidateListenersMap.has(token)) {
-        this._removeEventListener(listener.event, token)
+    currentListenersMap.forEach(
+      /**
+       *
+       * @param {EventListenerConfig} currentListener
+       * @param {string} currentToken
+       * @param set
+       */
+      (currentListener, currentToken, set) => {
+
+      let hasEvent = false
+      candidateListenersMap.forEach((
+        /**
+         * @type {EventListenerConfig}
+         */
+        listener,
+        token,
+        set
+      ) => {
+
+
+        if (EventListenerConfig.areLike(currentListener, listener)) {
+          hasEvent = true
+        }
+      })
+
+      if(!hasEvent){
+        this._removeEventListener(currentListener.event, currentToken)
       }
     })
-    candidateListenersMap.forEach((listener, token, set) => {
-      if (!currentListenersMap.has(token)) {
-        this._addEventListener(listener)
+
+
+    candidateListenersMap.forEach((candidateListener, candidateToken, set) => {
+
+      let hasEvent = false
+      currentListenersMap.forEach((
+        /**
+         * @type {EventListenerConfig}
+         */
+        listener,
+        token,
+        set
+      ) => {
+
+
+        if (EventListenerConfig.areLike(candidateListener, listener)) {
+          hasEvent = true
+        }
+      })
+
+      if(!hasEvent){
+        this._addEventListener(candidateListener)
       }
+
     })
   }
 
   /**
    * @private
-   * @param {String} event : params of events
+   * @param {String} event - params of events
    */
   _removeAllListeners(event) {
     this.$current.eventListeners().get(event)
@@ -122,7 +171,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : params of events
+   * @param {String} event - params of events
    */
   _addAllListeners(event) {
     this.$candidate.eventListeners().get(event)
@@ -133,7 +182,7 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {String} event : params of events
+   * @param {String} event - params of events
    * @param {String} token of Listener Map entry
    */
   _removeEventListener(event, token) {
@@ -142,11 +191,12 @@ class ListenerReconciliation {
 
   /**
    * @private
-   * @param {EventListenerParam} listener : params of events
+   * @param {EventListenerConfig} listener - params of events
    */
   _addEventListener(listener) {
     this.$current.on(listener)
   }
+
 }
 
 export const listenerReconcile = ListenerReconciliation.listenerReconciliation

@@ -7,7 +7,7 @@
   "author": "Thomas Chatelain (https://github.com/TomAchT)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@flexio-oss/flexio-hyperflex": "0.1.0",
+    "@flexio-oss/flexio-hyperflex": "0.2.0-dev",
     "@flexio-corp/js-common-parent": "0.1.0-dev"
   },
   "devDependencies": {

@@ -2,7 +2,7 @@ import { isNode, assert } from '@flexio-oss/assert'
 import { removeChildNodes } from '@flexio-oss/js-type-helpers'
 import { select } from './ListenerAttributeHandler'
 import { nodeReconcile } from './NodeReconciliation'
-import { assertUpdateCurrent, listenerReconcile } from './ListenerReconciliation'
+import { listenerEquals, listenerReconcile } from './ListenerReconciliation'
 import { RECONCILIATION_RULES as R } from './rules'
 
 const MAX_SLIBINGS_NODES_UPDATE_BY_ID = 50
@@ -278,7 +278,7 @@ export class Reconciliation {
    */
   __isEqualListeners() {
     if (this._equalListeners === null) {
-      this._equalListeners = assertUpdateCurrent(this.$current.eventListeners(), this.$candidate.eventListeners())
+      this._equalListeners = listenerEquals(this.$current.eventListeners(), this.$candidate.eventListeners())
     }
     return this._equalListeners
   }

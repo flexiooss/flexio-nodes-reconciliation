@@ -122,9 +122,10 @@ export class Reconciliation {
    * @param {Element} current
    * @param {Element} candidate
    * @param {Element} parentCurrent Parent of current element
+   * @return {boolean}
    */
   static reconciliation(current, candidate, parentCurrent) {
-    new Reconciliation(current, candidate, parentCurrent).reconcile()
+    return new Reconciliation(current, candidate, parentCurrent).reconcile()
   }
 
   /**
@@ -132,9 +133,10 @@ export class Reconciliation {
    * @param {Element} current
    * @param {Element} candidate
    * @param {Element} parentCurrent Parent of current element
+   * @return {boolean}
    */
   static startReconciliation(current, candidate, parentCurrent) {
-    new Reconciliation(current, candidate, parentCurrent)
+    return new Reconciliation(current, candidate, parentCurrent)
       .withRootReconciliation(true)
       .reconcile()
   }
@@ -143,14 +145,15 @@ export class Reconciliation {
    * @param {Element} current
    * @param {Element} candidate
    * @param {Element} parentCurrent Parent of current element
+   * @return {boolean}
    */
   reconciliation(current, candidate, parentCurrent) {
-    new Reconciliation(current, candidate, parentCurrent).reconcile()
+    return new Reconciliation(current, candidate, parentCurrent).reconcile()
   }
 
   /**
    *
-   * @return {(boolean | void)}
+   * @return {boolean}
    */
   reconcile() {
     if (this._hasByPassRule() || (this.__isEqualNode() && this.__isEqualListeners())) {
@@ -174,6 +177,8 @@ export class Reconciliation {
 
       listenerReconcile(this.current, this.$current, this.candidate, this.$candidate)
     }
+
+    return this._isCurrentReplaced
   }
 
   /**

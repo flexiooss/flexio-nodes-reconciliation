@@ -1,4 +1,4 @@
-import {isNode, assert, isNodeText} from '@flexio-oss/assert'
+import {isNode, assert, isNodeText, isNull} from '@flexio-oss/assert'
 import {select as $} from './ListenerAttributeHandler'
 import {ReconcileNodeProperties} from './ReconcileNodeProperties'
 import {RECONCILIATION_RULES as R} from './rules'
@@ -56,7 +56,13 @@ class NodeReconciliation {
     }
     if (isNodeText(this.candidate)) {
       return this.__updateText()
+    } else if (!isNull(this.candidate.id) && !isNull(this.current.id) && this.candidate.id !== this.current.id) {
+      return this.__replaceWith(this.current, this.candidate)
     } else if (this.current.tagName && this.current.tagName === this.candidate.tagName) {
+
+      // if (this.candidate.id !== this.current.id) {
+      //   this.current.id = this.candidate.id
+      // }
       ReconcileNodeClassList.create(this.$current, this.$candidate).process()
       ReconcileNodeAttributes.create(this.$current, this.$candidate).process()
       ReconcileNodeProperties.create(this.$current, this.$candidate).process()

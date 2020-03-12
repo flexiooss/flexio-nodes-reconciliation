@@ -1,14 +1,14 @@
 {
   "name": "@flexio-oss/flexio-nodes-reconciliation",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Attempt to reconcile 2 nodes elements",
   "main": "index.js",
   "repository": "git@github.com:flexiooss/flexio-nodes-reconciliation.git",
   "author": "Thomas Chatelain (https://github.com/TomAchT)",
   "license": "Apache-2.0",
   "dependencies": {
-    "@flexio-oss/flexio-hyperflex": "0.1.0",
-    "@flexio-corp/js-common-parent": "0.0.0"
+    "@flexio-oss/flexio-hyperflex": "0.2.0",
+    "@flexio-corp/js-common-parent": "0.1.0"
   },
   "devDependencies": {
     "code-altimeter-js": "https://github.com/flexiooss/code-altimeter-js.git"
